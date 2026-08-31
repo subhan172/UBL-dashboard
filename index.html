@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UBL — United Bank Limited | Financial Performance &amp; Banking Analytics Dashboard</title>
+<meta name="description" content="Financial performance and banking analytics dashboard for United Bank Limited (PSX: UBL), Pakistan. Data for FY2020–FY2025 from UBL's audited accounts and investor disclosures.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --green-900:#053B26;
+  --green-800:#0A5C3A;
+  --green-600:#0F7A4F;
+  --green-700:#0E7148;
+  --green-500:#1B8A5A;
+  --green-050:#E8F2ED;
+  --ink:#0E1B2A;
+  --ink-2:#33475B;
+  --slate:#61748A;
+  --line:#E1E7E4;
+  --canvas:#F4F7F5;
+  --card:#FFFFFF;
+  --pos:#0F7A46;
+  --neg:#B3261E;
+  --warn:#9A6B00;
+  --neutral:#61748A;
+  --shadow:0 1px 2px rgba(14,27,42,.05), 0 8px 24px -18px rgba(14,27,42,.35);
+  --radius:12px;
+  --maxw:1360px;
+}
+[data-theme="dark"]{
+  --green-900:#D6EFE2;
+  --green-800:#7BD3A8;
+  --green-700:#4FBF8B;
+  --green-500:#2FA871;
+  --green-050:#0E2A20;
+  --ink:#EAF1EE;
+  --ink-2:#B9C7D2;
+  --slate:#8FA2B2;
+  --line:#20303C;
+  --canvas:#0B1620;
+  --card:#111F2B;
+  --pos:#4ECB8B;
+  --neg:#FF8A80;
+  --warn:#F0C674;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.9);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--canvas);color:var(--ink);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+}
+h1,h2,h3,h4{font-family:"Source Serif 4",Georgia,serif;font-weight:600;letter-spacing:-.01em;margin:0}
+a{color:var(--green-700)}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- header ---------- */
+header.site{background:var(--card);border-bottom:1px solid var(--line);position:relative}
+.head-top{display:flex;gap:20px;align-items:flex-start;padding:22px 0 18px;flex-wrap:wrap}
+.mark{width:52px;height:52px;flex:0 0 52px;border-radius:10px;background:linear-gradient(160deg,var(--green-800),var(--green-500));display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.mark svg{width:34px;height:34px}
+.head-id{flex:1 1 320px;min-width:260px}
+.head-id h1{font-size:26px;line-height:1.15}
+.head-id p.sub{margin:4px 0 0;color:var(--slate);font-size:14.5px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:99px;color:var(--ink-2);background:var(--canvas)}
+.chip.brand{background:var(--green-050);border-color:transparent;color:var(--green-800);font-weight:600}
+.head-actions{display:flex;gap:8px;align-items:center;margin-left:auto;padding-top:4px}
+button.btn{font-family:inherit;font-size:13px;font-weight:500;color:var(--ink-2);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
+button.btn:hover{border-color:var(--green-500);color:var(--green-800)}
+button.btn.solid{background:var(--green-800);border-color:var(--green-800);color:#fff}
+[data-theme="dark"] button.btn.solid{color:#06231A}
+button.btn:focus-visible,select:focus-visible,a:focus-visible,[role=tab]:focus-visible{outline:2px solid var(--green-500);outline-offset:2px}
+
+/* ---------- nav ---------- */
+nav.tabs{border-top:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:30}
+.tabrow{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabrow::-webkit-scrollbar{display:none}
+.tabrow button{font-family:inherit;font-size:13.5px;font-weight:500;white-space:nowrap;background:none;border:none;border-bottom:2px solid transparent;color:var(--slate);padding:13px 14px;cursor:pointer}
+.tabrow button[aria-selected="true"]{color:var(--green-800);border-bottom-color:var(--green-700);font-weight:600}
+.tabrow button:hover{color:var(--ink)}
+
+/* ---------- filter bar ---------- */
+.filters{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:45px;z-index:29}
+.filterrow{display:flex;gap:14px;align-items:center;padding:10px 0;flex-wrap:wrap}
+.fgroup{display:flex;align-items:center;gap:7px}
+.fgroup label{font-size:12px;color:var(--slate)}
+select{font-family:inherit;font-size:13px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:7px;padding:6px 9px}
+.filter-note{font-size:12px;color:var(--slate);margin-left:auto}
+
+/* ---------- layout ---------- */
+main{padding:26px 0 10px}
+section.panel[hidden]{display:none}
+.sec-head{margin:6px 0 14px;max-width:78ch}
+.sec-head h2{font-size:20px}
+.sec-head p{margin:5px 0 0;color:var(--slate);font-size:13.5px}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g23{grid-template-columns:2fr 1fr}
+.g32{grid-template-columns:1fr 2fr}
+@media(max-width:1080px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}.g23,.g32{grid-template-columns:1fr}}
+@media(max-width:640px){.g4,.g3,.g2{grid-template-columns:1fr}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+.card h3{font-size:15px;margin-bottom:2px}
+.card .cap{font-size:12px;color:var(--slate);margin:2px 0 12px}
+
+/* ---------- kpi ---------- */
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 13px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green-700);opacity:.85}
+.kpi.k-bank::before{background:var(--green-500)}
+.kpi.k-share::before{background:#8C6E2B}
+[data-theme="dark"] .kpi.k-share::before{background:#D9B45E}
+.kpi .klab{font-size:11.5px;color:var(--slate);letter-spacing:.01em}
+.kpi .kval{font-family:"Source Serif 4",Georgia,serif;font-size:25px;font-weight:600;line-height:1.15;margin-top:3px}
+.kpi .kmeta{display:flex;gap:8px;align-items:baseline;margin-top:5px;flex-wrap:wrap}
+.kpi .kdelta{font-size:12.5px;font-weight:600}
+.kpi .kprev{font-size:11.5px;color:var(--slate)}
+.kpi .ktag{position:absolute;right:10px;top:10px;font-size:9.5px;color:var(--slate);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+.up{color:var(--pos)}.down{color:var(--neg)}.flat{color:var(--neutral)}
+
+/* ---------- charts ---------- */
+.chart-box{position:relative;height:290px}
+.chart-box.tall{height:340px}
+.chart-box.short{height:230px}
+.chart-note{font-size:11.5px;color:var(--slate);margin-top:9px;line-height:1.45}
+
+/* ---------- stat rows ---------- */
+.statlist{display:flex;flex-direction:column;gap:0}
+.statrow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.statrow:last-child{border-bottom:none}
+.statrow .lab{color:var(--ink-2)}
+.statrow .val{font-weight:600}
+.statrow .val small{font-weight:400;color:var(--slate);font-size:11.5px;margin-left:5px}
+
+/* ---------- insights ---------- */
+.insight{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--green-700);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow)}
+.insight h4{font-size:14px;margin-bottom:5px}
+.insight p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.55}
+.flagcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);display:flex;gap:12px}
+.flagdot{flex:0 0 9px;height:9px;border-radius:99px;margin-top:6px}
+.flag-watch .flagdot{background:var(--warn)}
+.flag-risk .flagdot{background:var(--neg)}
+.flag-ok .flagdot{background:var(--pos)}
+.flagcard h4{font-size:13.5px;margin-bottom:3px}
+.flagcard p{margin:0;font-size:13px;color:var(--ink-2)}
+.flagcard .sev{font-size:10.5px;color:var(--slate);display:block;margin-top:6px}
+
+/* ---------- tables ---------- */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:640px}
+th,td{padding:9px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card);z-index:1}
+thead th{background:var(--green-050);color:var(--green-800);font-weight:600;font-size:12px;border-bottom:1px solid var(--line)}
+[data-theme="dark"] thead th{background:#0E2A20}
+thead th:first-child{background:var(--green-050)}
+[data-theme="dark"] thead th:first-child{background:#0E2A20}
+tbody tr:hover td{background:var(--green-050)}
+[data-theme="dark"] tbody tr:hover td{background:#12302410}
+td.pos{color:var(--pos);font-weight:600}
+td.neg{color:var(--neg);font-weight:600}
+td.na{color:var(--slate)}
+.grouprow td{background:var(--canvas);font-weight:600;font-size:12px;color:var(--slate)}
+
+/* ---------- misc ---------- */
+.legend-inline{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--slate);margin-top:8px}
+.legend-inline span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
+.bar-track{height:8px;background:var(--canvas);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.bar-fill{height:100%;background:var(--green-700)}
+details.expander{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);box-shadow:var(--shadow);overflow:hidden}
+details.expander>summary{cursor:pointer;padding:14px 18px;font-family:"Source Serif 4",Georgia,serif;font-size:15px;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+details.expander>summary::-webkit-details-marker{display:none}
+details.expander>summary::after{content:"Show";font-family:Inter,sans-serif;font-size:12px;font-weight:500;color:var(--green-700);border:1px solid var(--line);border-radius:6px;padding:3px 9px}
+details.expander[open]>summary::after{content:"Hide"}
+details.expander .body{padding:0 18px 18px}
+.callout{background:var(--green-050);border:1px solid transparent;border-radius:var(--radius);padding:15px 18px}
+.callout h3{color:var(--green-800);font-size:15px}
+.callout p{margin:6px 0 0;font-size:13.5px;color:var(--ink-2)}
+footer.site{border-top:1px solid var(--line);background:var(--card);margin-top:32px;padding:26px 0 34px}
+footer .fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:26px}
+@media(max-width:820px){footer .fgrid{grid-template-columns:1fr}}
+footer h4{font-size:14px;margin-bottom:8px}
+footer p,footer li{font-size:12.5px;color:var(--slate);line-height:1.6}
+footer ul{margin:0;padding-left:16px}
+.disclaim{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--slate)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+@media print{
+  nav.tabs,.filters,.head-actions{display:none!important}
+  section.panel[hidden]{display:block!important}
+  .card,.kpi,.insight,.flagcard{break-inside:avoid;box-shadow:none}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap head-top">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 8v14c0 6.6 5.4 12 12 12s12-5.4 12-12V8h-6v14a6 6 0 0 1-12 0V8z" fill="#fff"/>
+        <rect x="8" y="30" width="24" height="3" rx="1.5" fill="#fff" opacity=".55"/>
+      </svg>
+    </div>
+    <div class="head-id">
+      <h1>UBL — United Bank Limited</h1>
+      <p class="sub">Financial Performance &amp; Banking Analytics Dashboard</p>
+      <div class="chips">
+        <span class="chip brand">PSX: UBL</span>
+        <span class="chip">Latest audited year: FY2025 (year ended 31 Dec 2025)</span>
+        <span class="chip">Figures: unconsolidated, PKR</span>
+        <span class="chip" id="chipUpdated">Last updated: 31 Aug 2026</span>
+      </div>
+    </div>
+    <div class="head-actions">
+      <button class="btn" id="themeBtn" type="button" aria-pressed="false">Dark mode</button>
+      <button class="btn solid" id="printBtn" type="button">Download report</button>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="Dashboard sections">
+    <div class="wrap tabrow" role="tablist">
+      <button role="tab" id="tab-overview"   aria-controls="sec-overview"   aria-selected="true">Overview</button>
+      <button role="tab" id="tab-performance" aria-controls="sec-performance" aria-selected="false">Financial Performance</button>
+      <button role="tab" id="tab-balance"    aria-controls="sec-balance"    aria-selected="false">Balance Sheet</button>
+      <button role="tab" id="tab-banking"    aria-controls="sec-banking"    aria-selected="false">Banking KPIs</button>
+      <button role="tab" id="tab-stock"      aria-controls="sec-stock"      aria-selected="false">Shareholder &amp; Stock</button>
+      <button role="tab" id="tab-insights"   aria-controls="sec-insights"   aria-selected="false">Insights</button>
+    </div>
+  </nav>
+  <div class="filters">
+    <div class="wrap filterrow">
+      <div class="fgroup">
+        <label for="yearSel">Financial year</label>
+        <select id="yearSel"></select>
+      </div>
+      <div class="fgroup">
+        <label for="metricSel">Headline trend</label>
+        <select id="metricSel">
+          <option value="grossIncome">Total income</option>
+          <option value="pat">Profit after tax</option>
+          <option value="pbt">Profit before tax</option>
+          <option value="nii">Net interest income</option>
+          <option value="deposits">Deposits</option>
+          <option value="advGross">Advances (gross)</option>
+          <option value="totalAssets">Total assets</option>
+          <option value="totalEquity">Total equity</option>
+        </select>
+      </div>
+      <div class="fgroup">
+        <label for="catSel">KPI category</label>
+        <select id="catSel">
+          <option value="all">All</option>
+          <option value="fin">Financial</option>
+          <option value="bank">Banking</option>
+          <option value="share">Shareholder</option>
+        </select>
+      </div>
+      <button class="btn" id="resetBtn" type="button">Reset filters</button>
+      <span class="filter-note">Selected year drives the KPI cards, the mix charts and the year-on-year table. Click any bar in a chart to change the year.</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ OVERVIEW ============ -->
+<section class="panel" id="sec-overview" role="tabpanel" aria-labelledby="tab-overview">
+  <div class="sec-head">
+    <h2>Where UBL stands, <span id="ovYearLabel">FY2025</span></h2>
+    <p id="ovStrap">The 30-second read: what the bank earned, what it holds, and how the balance sheet is funded.</p>
+  </div>
+
+  <div class="grid g4" id="kpiFin"></div>
+  <div class="grid g4" id="kpiBank" style="margin-top:14px"></div>
+  <div class="grid g4" id="kpiShare" style="margin-top:14px"></div>
+
+  <div class="grid g23" style="margin-top:20px">
+    <div class="card">
+      <h3 id="trendTitle">Total income</h3>
+      <p class="cap">PKR billion, FY2020–FY2025. Change the series with the “Headline trend” filter.</p>
+      <div class="chart-box"><canvas id="cTrend"></canvas></div>
+      <p class="chart-note" id="trendNote"></p>
+    </div>
+    <div class="card">
+      <h3>Income mix</h3>
+      <p class="cap" id="mixCap">FY2025 — share of total income</p>
+      <div class="chart-box"><canvas id="cMix"></canvas></div>
+      <p class="chart-note">Net interest income is the spread earned on lending and investments; the rest is fee, commission, exchange, capital-gain and dividend income.</p>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>The year in one screen</h3>
+      <p class="cap">Reported unconsolidated results, FY2025 against FY2024</p>
+      <div class="statlist" id="snapshotList"></div>
+    </div>
+    <div class="card">
+      <h3>Franchise at a glance</h3>
+      <p class="cap">Operating footprint as disclosed in UBL's December 2025 investor presentation</p>
+      <div class="statlist">
+        <div class="statrow"><span class="lab">Branch network</span><span class="val">2,017 branches <small>incl. 752 Islamic branches &amp; 596 windows</small></span></div>
+        <div class="statrow"><span class="lab">Digital banking customers</span><span class="val">Over 5 million <small>mobile app</small></span></div>
+        <div class="statrow"><span class="lab">Home remittances</span><span class="val">USD 10bn+ <small>inflows, FY2025</small></span></div>
+        <div class="statrow"><span class="lab">International presence</span><span class="val">UAE, Qatar, Bahrain</span></div>
+        <div class="statrow"><span class="lab">Entity rating</span><span class="val">AAA / A-1+ <small>VIS, reaffirmed</small></span></div>
+        <div class="statrow"><span class="lab">Corporate event</span><span class="val">Silk Bank merged into UBL <small>effective 11 Mar 2025</small></span></div>
+        <div class="statrow"><span class="lab">Capital structure</span><span class="val">1 share of Rs 10 split into 2 of Rs 5 <small>June 2025; per-share history restated</small></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:14px">
+    <h3>After the reporting period</h3>
+    <p>FY2025 is the latest audited year. Since then UBL has reported a record standalone pre-tax profit of about PKR 102bn for Q1 2026, consolidated profit after tax of PKR 37.5bn in Q2 2026 (up 31% year on year, EPS PKR 14.97), and deposits of about PKR 6.1 trillion at June 2026 — up roughly 43% year on year. Cost-to-income rose to about 40% in Q2 2026 from 33% a year earlier as branch expansion and deposit-mobilisation spending increased. These are interim, unaudited figures and are shown for context only; every chart on this page is built on full-year data.</p>
+  </div>
+</section>
+
+<!-- ============ PERFORMANCE ============ -->
+<section class="panel" id="sec-performance" role="tabpanel" aria-labelledby="tab-performance" hidden>
+  <div class="sec-head">
+    <h2>Financial performance</h2>
+    <p>Six years of income, profit, earnings and returns. FY2025 was reshaped by two forces: interest expense fell while the investment book roughly doubled, and the Silk Bank merger added scale from March 2025.</p>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Total income and its two engines</h3>
+      <p class="cap">PKR billion — net interest income plus non-interest income</p>
+      <div class="chart-box"><canvas id="cIncome"></canvas></div>
+      <p class="chart-note">Total income rose 61% in FY2025 to PKR 419.6bn. Net interest income more than doubled while non-interest income fell 34%, as the large FY2024 securities gains were not repeated.</p>
+    </div>
+    <div class="card">
+      <h3>Profit before and after tax</h3>
+      <p class="cap">PKR billion, with year-on-year growth in profit after tax</p>
+      <div class="chart-box"><canvas id="cProfit"></canvas></div>
+      <p class="chart-note">Profit before tax grew 92% in FY2025 but profit after tax grew 59%, because the effective tax rate rose to about 55.6% from 46.4%.</p>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>Earnings and dividends per share</h3>
+      <p class="cap">PKR per share, restated for the June 2025 share split, with the payout ratio</p>
+      <div class="chart-box"><canvas id="cEps"></canvas></div>
+      <p class="chart-note">Every per-share figure on this page is restated for the 2025 split, so FY2024 earnings per share appear as PKR 32.89 rather than the PKR 65.78 reported at the time.</p>
+    </div>
+    <div class="card">
+      <h3>Returns and spread</h3>
+      <p class="cap">Return on equity and gross spread (left axis, %) against return on assets (right axis, %)</p>
+      <div class="chart-box"><canvas id="cRatios"></canvas></div>
+      <p class="chart-note">Return on equity has climbed for four straight years to 45.3%. Return on assets has stayed near 1.2%, because the balance sheet has grown as fast as the profit.</p>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>How non-interest income is earned</h3>
+      <p class="cap">PKR billion by source</p>
+      <div class="chart-box"><canvas id="cNfi"></canvas></div>
+      <p class="chart-note">Fee, commission, brokerage and exchange income reached a record PKR 45.2bn in FY2025, up 45%. The fall in total non-interest income came entirely from capital gains and dividend income, down from PKR 47.3bn to PKR 12.3bn.</p>
+    </div>
+    <div class="card">
+      <h3>Income by business segment</h3>
+      <p class="cap">PKR billion, FY2024 against FY2025</p>
+      <div class="chart-box"><canvas id="cSegment"></canvas></div>
+      <p class="chart-note">Segment income includes inter-segment transfer pricing, which is why treasury swings so sharply and branch banking falls even as deposits grow. Read the two together rather than separately.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BALANCE SHEET ============ -->
+<section class="panel" id="sec-balance" role="tabpanel" aria-labelledby="tab-balance" hidden>
+  <div class="sec-head">
+    <h2>Balance sheet</h2>
+    <p>UBL's balance sheet grew 57% in FY2025 to PKR 12.6 trillion. Almost all of that growth sits in government securities funded by deposits and repo borrowing, not in lending.</p>
+  </div>
+
+  <div class="grid g4" id="kpiBs"></div>
+
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card">
+      <h3>Total assets</h3>
+      <p class="cap">PKR trillion at each year end, with year-on-year growth</p>
+      <div class="chart-box"><canvas id="cAssets"></canvas></div>
+      <p class="chart-note">Assets have grown more than six-fold since FY2020. The step change began in FY2023 when the bank started funding large government-securities positions with repo borrowing.</p>
+    </div>
+    <div class="card">
+      <h3>Deposits against advances</h3>
+      <p class="cap">PKR trillion at each year end</p>
+      <div class="chart-box"><canvas id="cDepAdv"></canvas></div>
+      <p class="chart-note">The two lines have separated. Deposits nearly doubled in FY2025 while gross advances fell 4.6%, so the gross advances-to-deposits ratio dropped to 28.9%.</p>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>What the bank owns</h3>
+      <p class="cap" id="assetMixCap">FY2025 — asset composition, net of provisions</p>
+      <div class="chart-box"><canvas id="cAssetMix"></canvas></div>
+      <p class="chart-note">Investments — overwhelmingly government paper — dominate the asset side. Lending is a small and shrinking share of the total.</p>
+    </div>
+    <div class="card">
+      <h3>How the bank is funded</h3>
+      <p class="cap" id="fundCap">FY2025 — funding structure</p>
+      <div class="chart-box"><canvas id="cFunding"></canvas></div>
+      <p class="chart-note">Borrowings from financial institutions exceeded customer deposits at both FY2024 and FY2025 year ends. That is a deliberate treasury strategy, and it is also the balance sheet's main sensitivity to funding markets.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Equity and book value per share</h3>
+    <p class="cap">PKR billion of total equity (bars) against book value per share in PKR (line), split-adjusted</p>
+    <div class="chart-box short"><canvas id="cEquity"></canvas></div>
+    <p class="chart-note">Total equity rose 58% to PKR 498.7bn in FY2025. Roughly PKR 96bn of that increase is revaluation surplus on assets rather than retained earnings, so Tier-1 equity grew more slowly, by 36% to PKR 325.7bn.</p>
+  </div>
+</section>
+
+<!-- ============ BANKING KPIs ============ -->
+<section class="panel" id="sec-banking" role="tabpanel" aria-labelledby="tab-banking" hidden>
+  <div class="sec-head">
+    <h2>Banking KPIs</h2>
+    <p>Deposits, lending, asset quality, capital and efficiency — the five tests a bank is actually judged on.</p>
+  </div>
+
+  <h3 style="font-size:16px;margin:4px 0 10px">Deposits</h3>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Deposit growth</h3>
+      <p class="cap">PKR trillion (bars) with year-on-year growth in % (line)</p>
+      <div class="chart-box"><canvas id="cDeposits"></canvas></div>
+      <p class="chart-note">Deposits grew 96% in FY2025 to PKR 5,168bn — the fastest growth of any large Pakistani bank that year, helped by the Silk Bank merger and an aggressive low-cost deposit drive.</p>
+    </div>
+    <div class="card">
+      <h3>Deposit mix: current, savings and term</h3>
+      <p class="cap">PKR billion, calculated from UBL's disclosed current-account and CASA ratios</p>
+      <div class="chart-box"><canvas id="cCasa"></canvas></div>
+      <p class="chart-note">The CASA ratio fell from 94% to 86% and the current-account ratio from 60% to 52%. Both remain high by industry standards, but growth is now coming from more expensive money.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Deposits by business segment</h3>
+    <p class="cap">PKR billion at year end</p>
+    <div class="chart-box short"><canvas id="cDepSeg"></canvas></div>
+    <p class="chart-note">Corporate deposits grew more than four-fold and branch banking added over PKR 1 trillion. International and Islamic banking both roughly doubled.</p>
+  </div>
+
+  <h3 style="font-size:16px;margin:22px 0 10px">Lending and asset quality</h3>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Advances and the advances-to-deposits ratio</h3>
+      <p class="cap">Gross advances in PKR billion (bars) against the gross ratio in % (line)</p>
+      <div class="chart-box"><canvas id="cAdvances"></canvas></div>
+      <p class="chart-note">Gross advances fell to PKR 1,492bn. With deposits nearly doubling, the gross advances-to-deposits ratio halved to 28.9% — the lowest in the six years shown.</p>
+    </div>
+    <div class="card">
+      <h3>Asset quality</h3>
+      <p class="cap">Gross and net infection ratios in % (lines) against provisions held in PKR billion (bars)</p>
+      <div class="chart-box"><canvas id="cNpl"></canvas></div>
+      <p class="chart-note">The gross infection ratio of 7.5% is elevated because the Silk Bank book came with legacy non-performing loans. The net infection ratio of 0.4% is the lowest on this chart, so those loans are essentially fully provided against.</p>
+    </div>
+  </div>
+
+  <h3 style="font-size:16px;margin:22px 0 10px">Capital and efficiency</h3>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Capital adequacy against the regulatory minimum</h3>
+      <p class="cap">Total capital adequacy ratio in % (bars) against the 13.0% requirement applicable to UBL (line)</p>
+      <div class="chart-box"><canvas id="cCar"></canvas></div>
+      <p class="chart-note">Capital adequacy of 21.0% leaves an 8 percentage point buffer over the 13.0% minimum, even after risk-weighted assets grew 57% during the year.</p>
+    </div>
+    <div class="card">
+      <h3>Capital composition and risk-weighted assets</h3>
+      <p class="cap">Capital tiers in % of risk-weighted assets, unconsolidated</p>
+      <div class="chart-box"><canvas id="cCarMix"></canvas></div>
+      <p class="chart-note">Common equity Tier-1 rose from 14.6% to 15.9% while Tier-2 fell, so the capital base improved in quality as well as size. Risk-weighted assets grew from PKR 1,581bn to PKR 2,479bn.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Efficiency</h3>
+    <p class="cap">Cost-to-income ratio and intermediation cost ratio, %</p>
+    <div class="chart-box short"><canvas id="cEfficiency"></canvas></div>
+    <p class="chart-note">Cost-to-income improved to 31.0% from 36.3% even though administrative expenses rose 38%, because income grew faster. This is the strongest efficiency reading in the six years shown.</p>
+  </div>
+</section>
+
+<!-- ============ STOCK ============ -->
+<section class="panel" id="sec-stock" role="tabpanel" aria-labelledby="tab-stock" hidden>
+  <div class="sec-head">
+    <h2>Shareholder and stock</h2>
+    <p>UBL was Pakistan's largest bank by market capitalisation through 2025 and 2026. This section separates what the company reported from what the market paid.</p>
+  </div>
+
+  <div class="grid g4" id="kpiStock"></div>
+
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card">
+      <h3>Share price by year</h3>
+      <p class="cap">PKR, split-adjusted. Bars show the high-to-low range within each year; the line marks the closing price at year end.</p>
+      <div class="chart-box"><canvas id="cPrice"></canvas></div>
+      <p class="chart-note">The FY2025 range was unusually wide: a low of PKR 258.50 and a high of PKR 580.00, closing the year at PKR 424.59. Intra-year price data is not reproduced here because a reliable daily series was not available at build time.</p>
+    </div>
+    <div class="card">
+      <h3>Total shareholder return by year</h3>
+      <p class="cap">Price return plus dividend return, %. Dividend return uses the dividend paid for the year over the prior year-end price, matching UBL's own disclosure.</p>
+      <div class="chart-box"><canvas id="cTsr"></canvas></div>
+      <p class="chart-note">FY2025 delivered a total return of about 137.6%, following about 139.7% in FY2024. FY2022 was the only negative year in this window.</p>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>Valuation history</h3>
+      <p class="cap">Price-to-earnings multiple at each year end, as reported by UBL</p>
+      <div class="chart-box short"><canvas id="cPe"></canvas></div>
+      <p class="chart-note">The multiple has re-rated from under 4x in FY2022 to 8.3x at the end of FY2025, so the share price has risen faster than earnings for three years.</p>
+    </div>
+    <div class="card">
+      <h3>Who owns UBL</h3>
+      <p class="cap">Ownership by holder type. Source: S&amp;P Global Market Intelligence via Simply Wall St; reporting date not stated by the provider.</p>
+      <div class="chart-box short"><canvas id="cOwners"></canvas></div>
+      <p class="chart-note">Bestway Group is UBL's parent through Bestway International Holdings and accounts for almost all of the private-company holding; other sources put the wider Bestway-related stake at about 62%. Free float is roughly a quarter of the shares in issue.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Market snapshot</h3>
+    <p class="cap">Prices are delayed market data, not company disclosure. Ratios marked “calculated” are computed on this page from the price and the FY2025 accounts.</p>
+    <div class="statlist" id="marketList"></div>
+  </div>
+</section>
+
+<!-- ============ INSIGHTS ============ -->
+<section class="panel" id="sec-insights" role="tabpanel" aria-labelledby="tab-insights" hidden>
+  <div class="sec-head">
+    <h2>What the numbers say</h2>
+    <p>Each statement below is generated from the dataset on this page, using the year selected in the filter bar.</p>
+  </div>
+  <div class="grid g2" id="insightGrid"></div>
+
+  <div class="sec-head" style="margin-top:28px">
+    <h2>Investor watchlist</h2>
+    <p>Metrics that deserve attention. Only conditions the data actually supports are flagged.</p>
+  </div>
+  <div class="grid g3" id="flagGrid"></div>
+
+  <div class="sec-head" style="margin-top:28px">
+    <h2>Year-on-year comparison</h2>
+    <p id="yoyCap">FY2025 against FY2024, unconsolidated.</p>
+  </div>
+  <div class="tablewrap"><table id="yoyTable"><thead><tr>
+    <th>Metric</th><th id="yoyCur">FY2025</th><th id="yoyPrev">FY2024</th><th>Change</th><th>Change %</th>
+  </tr></thead><tbody></tbody></table></div>
+
+  <details class="expander" style="margin-top:22px">
+    <summary>Underlying historical data, FY2020–FY2025</summary>
+    <div class="body">
+      <div class="tablewrap"><table id="dataTable"></table></div>
+      <p class="chart-note">All amounts in PKR million unless the row states otherwise. Blank or “n/a” entries mean the figure was not available from the sources used; nothing has been estimated to fill a gap.</p>
+    </div>
+  </details>
+
+  <div class="sec-head" style="margin-top:28px">
+    <h2>Methodology and data sources</h2>
+    <p>Every number on this dashboard is either reported by UBL or calculated here from reported figures. Nothing is invented.</p>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Sources used</h3>
+      <p class="cap">In order of precedence</p>
+      <div class="statlist">
+        <div class="statrow"><span class="lab">Six-year income statement, balance sheet, ratios and share data</span><span class="val">UBL investor presentation, “Performance Highlights &amp; Outlooks — December 2025”, published 14 Apr 2026 <small>reported</small></span></div>
+        <div class="statrow"><span class="lab">FY2025 profit, earnings per share, dividend, capital ratios, Silk Bank merger</span><span class="val">UBL Annual Report 2025 <small>reported</small></span></div>
+        <div class="statrow"><span class="lab">Segment and geographic income, deposits by segment</span><span class="val">UBL segment disclosures, FY2025 and FY2024 <small>reported</small></span></div>
+        <div class="statrow"><span class="lab">Capital adequacy history, infection ratios, provisioning coverage</span><span class="val">VIS Credit Rating Company rating report on UBL, 30 Jun 2025 <small>reported</small></span></div>
+        <div class="statrow"><span class="lab">Current share price, shares outstanding, ownership split, trailing 12-month figures</span><span class="val">S&amp;P Global Market Intelligence, via stockanalysis.com and Simply Wall St <small>third-party market data</small></span></div>
+        <div class="statrow"><span class="lab">Interim 2026 results and sector context</span><span class="val">Company results notices to PSX, reported by Business Recorder, ProPakistani and Dawn <small>press</small></span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>How the calculated metrics are derived</h3>
+      <p class="cap">Reported metrics are taken as published; these are computed on this page</p>
+      <div class="statlist">
+        <div class="statrow"><span class="lab">Net interest margin proxy</span><span class="val">Net interest income ÷ average total assets</span></div>
+        <div class="statrow"><span class="lab">Net profit margin</span><span class="val">Profit after tax ÷ total income</span></div>
+        <div class="statrow"><span class="lab">Effective tax rate</span><span class="val">Taxation ÷ profit before tax</span></div>
+        <div class="statrow"><span class="lab">Current, savings and term deposits</span><span class="val">Disclosed current-account and CASA ratios × total deposits</span></div>
+        <div class="statrow"><span class="lab">Gross non-performing loans</span><span class="val">Reported infection ratio × gross advances</span></div>
+        <div class="statrow"><span class="lab">Provision coverage</span><span class="val">Provisions held against advances ÷ gross non-performing loans</span></div>
+        <div class="statrow"><span class="lab">Total shareholder return</span><span class="val">Price return + dividend for the year ÷ prior year-end price</span></div>
+        <div class="statrow"><span class="lab">Market capitalisation</span><span class="val">Latest close × shares outstanding</span></div>
+        <div class="statrow"><span class="lab">Price to book</span><span class="val">Latest close ÷ FY2025 book value per share</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>Basis of preparation</h3>
+      <p class="cap">Read this before quoting any figure</p>
+      <div class="statlist">
+        <div class="statrow"><span class="lab">Consolidation basis</span><span class="val">Unconsolidated (bank only)</span></div>
+        <div class="statrow"><span class="lab">Currency and units</span><span class="val">Pakistan Rupees, millions unless stated</span></div>
+        <div class="statrow"><span class="lab">Financial year</span><span class="val">1 January to 31 December</span></div>
+        <div class="statrow"><span class="lab">Per-share figures</span><span class="val">Restated for the June 2025 split of one Rs 10 share into two Rs 5 shares</span></div>
+        <div class="statrow"><span class="lab">Consolidated comparison, FY2025</span><span class="val">Profit after tax PKR 130.0bn, earnings per share PKR 52.13 <small>versus PKR 128.0bn and PKR 51.33 unconsolidated</small></span></div>
+        <div class="statrow"><span class="lab">Cost-to-income ratio</span><span class="val">As reported by UBL, on operating expenses <small>the administrative and other expenses line in the data table is slightly wider, so dividing it by total income gives 32.3% rather than 31.0%</small></span></div>
+        <div class="statrow"><span class="lab">Merger effect</span><span class="val">Silk Bank amalgamated into UBL from 11 Mar 2025, so FY2025 is not fully like-for-like with FY2024</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>What is not on this dashboard</h3>
+      <p class="cap">Gaps are stated rather than filled</p>
+      <div class="statlist">
+        <div class="statrow"><span class="lab">Reported net interest margin on earning assets</span><span class="val">Not available <small>a proxy on average assets is shown instead</small></span></div>
+        <div class="statrow"><span class="lab">Deposit mix before FY2024</span><span class="val">Not available</span></div>
+        <div class="statrow"><span class="lab">Loan book by customer segment</span><span class="val">Not available for FY2025 <small>business-segment splits are shown instead</small></span></div>
+        <div class="statrow"><span class="lab">Daily or monthly share price series</span><span class="val">Not available <small>annual high, low and close are shown</small></span></div>
+        <div class="statrow"><span class="lab">Ownership as at a stated date</span><span class="val">Provider does not disclose the reporting date</span></div>
+        <div class="statrow"><span class="lab">Rolling 52-week high and low</span><span class="val">Not available <small>calendar-year high and low are shown</small></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <h4>UBL Financial Analytics Dashboard</h4>
+        <p>Built for financial analysis and educational purposes. Covers financial years 2020 to 2025, with interim 2026 results noted for context. Figures are unconsolidated and in Pakistan Rupees.</p>
+      </div>
+      <div>
+        <h4>Data sources</h4>
+        <ul>
+          <li>UBL investor presentation, December 2025</li>
+          <li>UBL Annual Report 2025 and segment disclosures</li>
+          <li>VIS Credit Rating Company report on UBL, June 2025</li>
+          <li>S&amp;P Global Market Intelligence market data</li>
+          <li>Company results notices to the Pakistan Stock Exchange</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Built with</h4>
+        <ul>
+          <li>HTML5, CSS3 and vanilla JavaScript</li>
+          <li>Chart.js 4.4 from CDN</li>
+          <li>Inter and Source Serif 4 from Google Fonts</li>
+          <li>No backend, no build step, single file</li>
+        </ul>
+      </div>
+    </div>
+    <p class="disclaim">This dashboard is not investment advice and is not affiliated with or endorsed by United Bank Limited. Financial data should be independently verified against UBL's audited financial statements before any investment decision.</p>
+  </div>
+</footer>
+
+<script>
+"use strict";
+
+/* =========================================================================
+   1. DATA
+   Unconsolidated (bank-only) figures in PKR million unless noted.
+   Primary source: UBL investor presentation "Performance Highlights &
+   Outlooks - December 2025" (published 14 April 2026), cross-checked
+   against the UBL Annual Report 2025 and the VIS rating report.
+   ========================================================================= */
+var YEARS = [2020, 2021, 2022, 2023, 2024, 2025];
+
+var D = {
+  /* income statement */
+  interestEarned : [152003, 147974, 250679, 521374, 1084583, 1184818],
+  interestExpense: [ 77044,  76216, 147469, 378490,  911168,  823256],
+  nii            : [ 74959,  71759, 103209, 142884,  173415,  361561],
+  fee            : [ 14782,  17056,  24286,  30025,   31132,   45181],
+  capGainDiv     : [  1681,   5791,   2560,   2081,   47283,   12300],
+  otherIncome    : [   631,    532,   7597,   1103,    9079,     518],
+  nfi            : [ 17094,  23379,  34443,  33210,   87494,   57999],
+  grossIncome    : [ 92054,  95138, 137652, 176094,  260909,  419560],
+  admin          : [ 40751,  43832,  53461,  66614,   97761,  135296],
+  ppop           : [ 51303,  51306,  84190, 109479,  163148,  284264],
+  donations      : [   342,    134,    211,     63,     205,     648],
+  provisions     : [-16768,    955, -15669,  -1298,  -12752,    4653],
+  pbt            : [ 34192,  52127,  68310, 108118,  150192,  288270],
+  tax            : [ 13294,  21245,  36247,  54938,   69664,  160261],
+  pat            : [ 20899,  30882,  32063,  53180,   80528,  128009],
+
+  /* balance sheet */
+  cash        : [ 264727,  291300,  158697,  308031,  369714,   604827],
+  lendings    : [  19959,   51701,   85296,   34448,   18492,    31575],
+  investGross : [1138018, 1504689, 1442017, 4411230, 5890966,  9954767],
+  advGross    : [ 609307,  728286, 1013767,  717068, 1565127,  1492430],
+  fixedAssets : [  53037,   70769,   73223,   76044,   97624,   215098],
+  otherAssets : [  52715,   61665,  104506,  157693,  246925,   448273],
+  provAdv     : [  79028,   82097,   91930,  103502,  121645,   123064],
+  provInv     : [   9344,    8146,   26823,   26014,    4072,     3713],
+  totalAssets : [2049392, 2618166, 2758753, 5574998, 8063132, 12620193],
+  deposits    : [1640212, 1750944, 1841819, 2350541, 2640211,  5168424],
+  borrowings  : [ 128987,  563285,  564519, 2815471, 4855374,  6530015],
+  subDebt     : [  10000,   10000,   10000,   10000,   10000,    10000],
+  bills       : [  29734,   26793,   33022,   21652,   44222,    58632],
+  otherLiab   : [  56386,   62502,  100373,  124834,  197103,   354391],
+  totalLiab   : [1865319, 2413523, 2549733, 5322497, 7746910, 12121462],
+  tier1Equity : [ 156432,  166586,  189934,  210535,  238932,   325706],
+  surplus     : [  27641,   38056,   19086,   41965,   77290,   173026],
+  totalEquity : [ 184073,  204643,  209020,  252501,  316222,   498732],
+
+  /* ratios as reported by UBL (%) */
+  roe            : [13.9, 19.1, 18.0, 26.6, 35.8, 45.3],
+  roa            : [ 1.1,  1.3,  1.2,  1.3,  1.2,  1.2],
+  pbtRatio       : [37.1, 54.8, 49.6, 61.4, 57.6, 68.7],
+  grossSpread    : [49.3, 48.5, 41.2, 27.4, 16.0, 30.5],
+  roce           : [13.1, 18.0, 17.0, 25.3, 34.3, 43.8],
+  adrGross       : [37.1, 41.6, 55.0, 30.5, 59.3, 28.9],
+  adrNet         : [32.3, 36.9, 50.1, 26.1, 54.7, 26.5],
+  incomeToExpense: [2.26, 2.17, 2.57, 2.64, 2.67, 3.10],
+  cir            : [43.5, 44.9, 38.0, 36.5, 36.3, 31.0],
+  assetsToEquity : [11.1, 12.8, 13.2, 22.1, 25.5, 25.3],
+  intermediation : [ 2.6,  2.6,  3.0,  3.2,  3.9,  3.5],
+  nplRatio       : [13.7, 11.8,  9.2, 14.7,  7.4,  7.5],
+  netInfection   : [ 2.2,  1.7,  1.2,  2.1,  0.6,  0.4],
+  costOfDebt     : [ 5.3,  4.8,  7.3, 11.4, 15.2,  9.3],
+  car            : [24.4, 21.5, 19.2, 16.6, 20.3, 21.0],
+
+  /* per share, restated for the June 2025 split */
+  eps      : [ 8.54, 12.61, 13.10, 21.72, 32.89,  51.33],
+  dps      : [ 6.00,  9.00, 11.00, 22.00, 22.00,  29.50],
+  payout   : [ 70.3,  71.4,  84.0, 101.3,  66.9,   57.5],
+  pe       : [ 7.37,  5.41,  3.85,  4.09,  5.81,   8.27],
+  bvps     : [   74,    82,    83,   101,   126,    199],
+  priceEnd : [62.93, 68.29, 50.38, 88.92, 191.12, 424.59],
+  priceHigh: [90.98, 71.95, 75.45, 96.00, 192.00, 580.00],
+  priceLow : [44.72, 57.14, 48.26, 45.75,  87.35, 258.50]
+};
+
+/* deposit mix ratios, disclosed for FY2024 and FY2025 only (%) */
+var DEP_MIX = { 2024: { current: 60, casa: 94 }, 2025: { current: 52, casa: 86 } };
+
+/* capital composition, % of risk-weighted assets, unconsolidated */
+var CAP_MIX = {
+  2024: { cet1: 14.6, adt1: 0.6, tier2: 5.1, rwaCredit: 982,  rwaMarket: 268, rwaOps: 331, rwaTotal: 1581 },
+  2025: { cet1: 15.9, adt1: 0.4, tier2: 4.7, rwaCredit: 1651, rwaMarket: 326, rwaOps: 502, rwaTotal: 2479 }
+};
+var CAR_MIN = 13.0;
+
+/* segment total income, PKR million */
+var SEG_LABELS = ["Corporate / commercial", "Treasury", "Branch banking", "Islamic banking", "International", "Other"];
+var SEG_INCOME = {
+  2024: [19010, -361, 153667, 40383, 33166, 15043],
+  2025: [26244, 189344, 118563, 45580, 43579, -3749]
+};
+var SEG_DEPOSITS = {
+  2024: [129325, 0, 1495020, 519488, 496379, 0],
+  2025: [548604, 0, 2574287, 956712, 1088821, 0]
+};
+
+/* market data: S&P Global Market Intelligence via stockanalysis.com */
+var MKT = {
+  price: 458.70,
+  priceDate: "28 Aug 2026",
+  shares: 2504,          /* million */
+  ttmEps: 60.36,
+  ttmDps: 32.00,
+  yearChange: 23.03,     /* % over 12 months to 14 Aug 2026 */
+  changeDate: "14 Aug 2026"
+};
+
+var OWNERS = [
+  { label: "Private companies (Bestway Group)", pct: 59.6 },
+  { label: "General public", pct: 36.6 },
+  { label: "Individual insiders", pct: 1.89 },
+  { label: "Institutions", pct: 1.87 }
+];
+
+/* =========================================================================
+   2. HELPERS
+   ========================================================================= */
+var iOf = function (y) { return YEARS.indexOf(Number(y)); };
+var at  = function (key, y) { var i = iOf(y); return i < 0 ? null : D[key][i]; };
+
+function nf(v, dp) {
+  if (v === null || v === undefined || isNaN(v)) return "n/a";
+  return Number(v).toLocaleString("en-US", { minimumFractionDigits: dp, maximumFractionDigits: dp });
+}
+function bn(mn, dp) {           /* PKR million -> "PKR 419.6bn" */
+  if (mn === null || mn === undefined) return "n/a";
+  var d = (dp === undefined) ? 1 : dp;
+  var abs = Math.abs(mn);
+  if (abs >= 1000000) return "PKR " + nf(mn / 1000000, 2) + "tn";
+  return "PKR " + nf(mn / 1000, d) + "bn";
+}
+function bnPlain(mn, dp) { return nf(mn / 1000, dp === undefined ? 1 : dp); }
+function pct(v, dp) { return v === null || v === undefined || isNaN(v) ? "n/a" : nf(v, dp === undefined ? 1 : dp) + "%"; }
+function rs(v, dp) { return v === null || v === undefined ? "n/a" : "PKR " + nf(v, dp === undefined ? 2 : dp); }
+function growth(cur, prev) {
+  if (cur === null || prev === null || prev === 0 || prev === undefined || cur === undefined) return null;
+  return (cur - prev) / Math.abs(prev) * 100;
+}
+function arrow(g, invert) {
+  if (g === null || isNaN(g)) return { cls: "flat", txt: "no comparison" };
+  var good = invert ? g < 0 : g > 0;
+  var sym = g > 0.05 ? "\u25B2" : (g < -0.05 ? "\u25BC" : "\u2192");
+  var cls = Math.abs(g) < 0.05 ? "flat" : (good ? "up" : "down");
+  return { cls: cls, txt: sym + " " + nf(Math.abs(g), 1) + "%" };
+}
+function ppChange(cur, prev) {
+  if (cur === null || prev === null) return null;
+  return cur - prev;
+}
+function ppArrow(pp, invert) {
+  if (pp === null || isNaN(pp)) return { cls: "flat", txt: "no comparison" };
+  var good = invert ? pp < 0 : pp > 0;
+  var sym = pp > 0.005 ? "\u25B2" : (pp < -0.005 ? "\u25BC" : "\u2192");
+  var cls = Math.abs(pp) < 0.005 ? "flat" : (good ? "up" : "down");
+  return { cls: cls, txt: sym + " " + nf(Math.abs(pp), 1) + " pp" };
+}
+
+/* derived series */
+var DER = {
+  nimProxy: [], netProfitMargin: [], effTax: [], netAdvances: [],
+  grossNpl: [], coverage: [], totalIncomeGrowth: [], patGrowth: [],
+  depositGrowth: [], assetGrowth: [], priceReturn: [], divReturn: [], tsr: []
+};
+(function buildDerived() {
+  for (var i = 0; i < YEARS.length; i++) {
+    var prevAssets = i > 0 ? D.totalAssets[i - 1] : null;
+    DER.nimProxy.push(prevAssets ? D.nii[i] / ((prevAssets + D.totalAssets[i]) / 2) * 100 : null);
+    DER.netProfitMargin.push(D.pat[i] / D.grossIncome[i] * 100);
+    DER.effTax.push(D.tax[i] / D.pbt[i] * 100);
+    DER.netAdvances.push(D.advGross[i] - D.provAdv[i]);
+    var npl = D.nplRatio[i] / 100 * D.advGross[i];
+    DER.grossNpl.push(npl);
+    DER.coverage.push(D.provAdv[i] / npl * 100);
+    DER.totalIncomeGrowth.push(i > 0 ? growth(D.grossIncome[i], D.grossIncome[i - 1]) : null);
+    DER.patGrowth.push(i > 0 ? growth(D.pat[i], D.pat[i - 1]) : null);
+    DER.depositGrowth.push(i > 0 ? growth(D.deposits[i], D.deposits[i - 1]) : null);
+    DER.assetGrowth.push(i > 0 ? growth(D.totalAssets[i], D.totalAssets[i - 1]) : null);
+    var pr = i > 0 ? growth(D.priceEnd[i], D.priceEnd[i - 1]) : null;
+    var dr = i > 0 ? D.dps[i] / D.priceEnd[i - 1] * 100 : null;
+    DER.priceReturn.push(pr);
+    DER.divReturn.push(dr);
+    DER.tsr.push(pr === null ? null : pr + dr);
+  }
+})();
+
+function depositSplit(year) {
+  var m = DEP_MIX[year];
+  if (!m) return null;
+  var tot = at("deposits", year);
+  var cur = m.current / 100 * tot;
+  var casa = m.casa / 100 * tot;
+  return { current: cur, savings: casa - cur, term: tot - casa, casaPct: m.casa, currentPct: m.current };
+}
+
+/* =========================================================================
+   3. STATE
+   ========================================================================= */
+var STATE = { year: 2025, metric: "grossIncome", cat: "all", section: "overview" };
+var CHARTS = {};
+var BUILT = {};
+
+function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function palette() {
+  return {
+    green: css("--green-700"), greenLight: css("--green-500"), greenDark: css("--green-800"),
+    ink: css("--ink"), slate: css("--slate"), line: css("--line"), card: css("--card"),
+    pos: css("--pos"), neg: css("--neg"), warn: css("--warn"),
+    series: [css("--green-800"), css("--green-500"), "#8C6E2B", "#5B7C99", "#A0522D", "#7A8C99"]
+  };
+}
+
+/* =========================================================================
+   4. KPI DEFINITIONS
+   ========================================================================= */
+var KPI = [
+  /* financial */
+  { g: "fin", lab: "Total income", tag: "Reported", fmt: function (y) { return bn(at("grossIncome", y)); },
+    val: function (y) { return at("grossIncome", y); }, kind: "amount" },
+  { g: "fin", lab: "Profit before tax", tag: "Reported", fmt: function (y) { return bn(at("pbt", y)); },
+    val: function (y) { return at("pbt", y); }, kind: "amount" },
+  { g: "fin", lab: "Profit after tax", tag: "Reported", fmt: function (y) { return bn(at("pat", y)); },
+    val: function (y) { return at("pat", y); }, kind: "amount" },
+  { g: "fin", lab: "Net interest income", tag: "Reported", fmt: function (y) { return bn(at("nii", y)); },
+    val: function (y) { return at("nii", y); }, kind: "amount" },
+  { g: "fin", lab: "Non-interest income", tag: "Reported", fmt: function (y) { return bn(at("nfi", y)); },
+    val: function (y) { return at("nfi", y); }, kind: "amount" },
+  { g: "fin", lab: "Total assets", tag: "Reported", fmt: function (y) { return bn(at("totalAssets", y)); },
+    val: function (y) { return at("totalAssets", y); }, kind: "amount" },
+  { g: "fin", lab: "Deposits", tag: "Reported", fmt: function (y) { return bn(at("deposits", y)); },
+    val: function (y) { return at("deposits", y); }, kind: "amount" },
+  { g: "fin", lab: "Advances, net", tag: "Calculated", fmt: function (y) { return bn(DER.netAdvances[iOf(y)]); },
+    val: function (y) { return DER.netAdvances[iOf(y)]; }, kind: "amount" },
+
+  /* banking */
+  { g: "bank", lab: "Return on equity", tag: "Reported", fmt: function (y) { return pct(at("roe", y)); },
+    val: function (y) { return at("roe", y); }, kind: "pp" },
+  { g: "bank", lab: "Return on assets", tag: "Reported", fmt: function (y) { return pct(at("roa", y)); },
+    val: function (y) { return at("roa", y); }, kind: "pp" },
+  { g: "bank", lab: "Cost-to-income", tag: "Reported", fmt: function (y) { return pct(at("cir", y)); },
+    val: function (y) { return at("cir", y); }, kind: "pp", invert: true },
+  { g: "bank", lab: "Net interest margin proxy", tag: "Calculated", fmt: function (y) { return pct(DER.nimProxy[iOf(y)], 2); },
+    val: function (y) { return DER.nimProxy[iOf(y)]; }, kind: "pp" },
+  { g: "bank", lab: "Capital adequacy ratio", tag: "Reported", fmt: function (y) { return pct(at("car", y)); },
+    val: function (y) { return at("car", y); }, kind: "pp" },
+  { g: "bank", lab: "CASA ratio", tag: "Reported", fmt: function (y) { return DEP_MIX[y] ? pct(DEP_MIX[y].casa) : "Not available"; },
+    val: function (y) { return DEP_MIX[y] ? DEP_MIX[y].casa : null; }, kind: "pp" },
+  { g: "bank", lab: "Gross infection ratio", tag: "Reported", fmt: function (y) { return pct(at("nplRatio", y)); },
+    val: function (y) { return at("nplRatio", y); }, kind: "pp", invert: true },
+  { g: "bank", lab: "Provision coverage", tag: "Calculated", fmt: function (y) { return pct(DER.coverage[iOf(y)], 0); },
+    val: function (y) { return DER.coverage[iOf(y)]; }, kind: "pp" },
+
+  /* shareholder */
+  { g: "share", lab: "Earnings per share", tag: "Reported", fmt: function (y) { return rs(at("eps", y)); },
+    val: function (y) { return at("eps", y); }, kind: "amount" },
+  { g: "share", lab: "Dividend per share", tag: "Reported", fmt: function (y) { return rs(at("dps", y)); },
+    val: function (y) { return at("dps", y); }, kind: "amount" },
+  { g: "share", lab: "Book value per share", tag: "Reported", fmt: function (y) { return rs(at("bvps", y), 0); },
+    val: function (y) { return at("bvps", y); }, kind: "amount" },
+  { g: "share", lab: "Price-to-earnings, year end", tag: "Reported", fmt: function (y) { return nf(at("pe", y), 2) + "x"; },
+    val: function (y) { return at("pe", y); }, kind: "amount" },
+  { g: "share", lab: "Dividend return", tag: "Calculated", fmt: function (y) { return pct(DER.divReturn[iOf(y)]); },
+    val: function (y) { return DER.divReturn[iOf(y)]; }, kind: "pp" },
+  { g: "share", lab: "Share price, year end", tag: "Reported", fmt: function (y) { return rs(at("priceEnd", y)); },
+    val: function (y) { return at("priceEnd", y); }, kind: "amount" },
+  { g: "share", lab: "Market capitalisation, year end", tag: "Calculated",
+    fmt: function (y) { var q = at("priceEnd", y); return q === null ? "n/a" : bn(q * MKT.shares); },
+    val: function (y) { var q = at("priceEnd", y); return q === null ? null : q * MKT.shares; }, kind: "amount" },
+  { g: "share", lab: "Total shareholder return", tag: "Calculated", fmt: function (y) { return pct(DER.tsr[iOf(y)]); },
+    val: function (y) { return DER.tsr[iOf(y)]; }, kind: "pp" }
+];
+
+function kpiCard(def, year) {
+  var prevYear = year - 1;
+  var cur = def.val(year);
+  var prev = YEARS.indexOf(prevYear) >= 0 ? def.val(prevYear) : null;
+  var delta, prevTxt;
+  if (def.kind === "pp") {
+    var pp = ppChange(cur, prev);
+    delta = ppArrow(pp, def.invert);
+    prevTxt = prev === null ? "no prior-year figure" : "FY" + prevYear + ": " + pct(prev, def.lab === "Net interest margin proxy" ? 2 : (def.lab === "Provision coverage" ? 0 : 1));
+  } else {
+    var g = growth(cur, prev);
+    delta = arrow(g, def.invert);
+    prevTxt = prev === null ? "no prior-year figure" : "FY" + prevYear + ": " + def.fmt(prevYear);
+  }
+  var cls = def.g === "bank" ? "kpi k-bank" : (def.g === "share" ? "kpi k-share" : "kpi");
+  return '<div class="' + cls + '">' +
+    '<span class="ktag">' + def.tag + '</span>' +
+    '<div class="klab">' + def.lab + '</div>' +
+    '<div class="kval">' + def.fmt(year) + '</div>' +
+    '<div class="kmeta"><span class="kdelta ' + delta.cls + '">' + delta.txt + '</span>' +
+    '<span class="kprev">' + prevTxt + ' &middot; FY' + year + '</span></div></div>';
+}
+
+function renderKpis() {
+  var y = STATE.year;
+  var groups = { fin: [], bank: [], share: [] };
+  KPI.forEach(function (d) { groups[d.g].push(kpiCard(d, y)); });
+  var show = function (id, key) {
+    var el = document.getElementById(id);
+    var on = (STATE.cat === "all" || STATE.cat === key);
+    el.innerHTML = on ? groups[key].join("") : "";
+    el.style.display = on ? "" : "none";
+  };
+  show("kpiFin", "fin"); show("kpiBank", "bank"); show("kpiShare", "share");
+
+  /* balance-sheet KPI strip */
+  var bs = [
+    { lab: "Total assets", v: at("totalAssets", y), p: at("totalAssets", y - 1) },
+    { lab: "Total liabilities", v: at("totalLiab", y), p: at("totalLiab", y - 1) },
+    { lab: "Total equity", v: at("totalEquity", y), p: at("totalEquity", y - 1) },
+    { lab: "Deposits", v: at("deposits", y), p: at("deposits", y - 1) },
+    { lab: "Advances, gross", v: at("advGross", y), p: at("advGross", y - 1) },
+    { lab: "Investments, gross", v: at("investGross", y), p: at("investGross", y - 1) },
+    { lab: "Cash and bank balances", v: at("cash", y), p: at("cash", y - 1) },
+    { lab: "Borrowings", v: at("borrowings", y), p: at("borrowings", y - 1) }
+  ];
+  document.getElementById("kpiBs").innerHTML = bs.map(function (r) {
+    var a = arrow(growth(r.v, r.p));
+    return '<div class="kpi"><span class="ktag">Reported</span><div class="klab">' + r.lab + '</div>' +
+      '<div class="kval">' + bn(r.v) + '</div><div class="kmeta"><span class="kdelta ' + a.cls + '">' + a.txt +
+      '</span><span class="kprev">' + (r.p === null ? "no prior-year figure" : "FY" + (y - 1) + ": " + bn(r.p)) + '</span></div></div>';
+  }).join("");
+
+  /* stock KPI strip: market-based, not year-dependent */
+  var mcap = MKT.price * MKT.shares;
+  var stock = [
+    { lab: "Share price", val: rs(MKT.price), sub: "close, " + MKT.priceDate, tag: "Market data" },
+    { lab: "Market capitalisation", val: bn(mcap), sub: "price \u00D7 " + nf(MKT.shares, 0) + "m shares", tag: "Calculated" },
+    { lab: "Price-to-earnings", val: nf(MKT.price / D.eps[5], 2) + "x", sub: "on FY2025 earnings per share", tag: "Calculated" },
+    { lab: "Price-to-book", val: nf(MKT.price / D.bvps[5], 2) + "x", sub: "on FY2025 book value per share", tag: "Calculated" },
+    { lab: "Dividend yield", val: pct(D.dps[5] / MKT.price * 100), sub: "on FY2025 dividend of " + rs(D.dps[5]), tag: "Calculated" },
+    { lab: "FY2025 high and low", val: nf(D.priceHigh[5], 2) + " / " + nf(D.priceLow[5], 2), sub: "calendar year, not rolling 52 weeks", tag: "Reported" },
+    { lab: "12-month price change", val: "+" + pct(MKT.yearChange), sub: "to " + MKT.changeDate, tag: "Market data" },
+    { lab: "Trailing earnings per share", val: rs(MKT.ttmEps), sub: "12 months to June 2026, consolidated", tag: "Market data" }
+  ];
+  document.getElementById("kpiStock").innerHTML = stock.map(function (r) {
+    return '<div class="kpi k-share"><span class="ktag">' + r.tag + '</span><div class="klab">' + r.lab + '</div>' +
+      '<div class="kval">' + r.val + '</div><div class="kmeta"><span class="kprev">' + r.sub + '</span></div></div>';
+  }).join("");
+}
+
+/* =========================================================================
+   5. SNAPSHOT + MARKET LISTS
+   ========================================================================= */
+function renderSnapshot() {
+  var y = STATE.year, i = iOf(y), p = i - 1;
+  var rows = [
+    ["Total income", bn(D.grossIncome[i]), p >= 0 ? growth(D.grossIncome[i], D.grossIncome[p]) : null, false],
+    ["Operating expenses", bn(D.admin[i]), p >= 0 ? growth(D.admin[i], D.admin[p]) : null, true],
+    ["Pre-provision operating profit", bn(D.ppop[i]), p >= 0 ? growth(D.ppop[i], D.ppop[p]) : null, false],
+    ["Profit before tax", bn(D.pbt[i]), p >= 0 ? growth(D.pbt[i], D.pbt[p]) : null, false],
+    ["Profit after tax", bn(D.pat[i]), p >= 0 ? growth(D.pat[i], D.pat[p]) : null, false],
+    ["Effective tax rate", pct(DER.effTax[i]), null, false],
+    ["Net profit margin", pct(DER.netProfitMargin[i]), null, false],
+    ["Deposits", bn(D.deposits[i]), p >= 0 ? growth(D.deposits[i], D.deposits[p]) : null, false],
+    ["Advances, gross", bn(D.advGross[i]), p >= 0 ? growth(D.advGross[i], D.advGross[p]) : null, false],
+    ["Provisions charge or reversal", (D.provisions[i] >= 0 ? "Reversal of " : "Charge of ") + bn(Math.abs(D.provisions[i])), null, false]
+  ];
+  document.getElementById("snapshotList").innerHTML = rows.map(function (r) {
+    var a = r[2] === null ? null : arrow(r[2], r[3]);
+    return '<div class="statrow"><span class="lab">' + r[0] + '</span><span class="val">' + r[1] +
+      (a ? ' <small class="' + a.cls + '">' + a.txt + '</small>' : '') + '</span></div>';
+  }).join("");
+  document.getElementById("ovYearLabel").textContent = "FY" + y;
+}
+
+function renderMarket() {
+  var mcap = MKT.price * MKT.shares;
+  var rows = [
+    ["Latest close", rs(MKT.price) + " <small>" + MKT.priceDate + "</small>"],
+    ["Shares outstanding", nf(MKT.shares, 0) + " million <small>post-split</small>"],
+    ["Market capitalisation", bn(mcap) + " <small>calculated</small>"],
+    ["FY2025 closing price", rs(D.priceEnd[5]) + " <small>31 Dec 2025</small>"],
+    ["FY2025 high / low", rs(D.priceHigh[5]) + " / " + rs(D.priceLow[5]) + " <small>calendar year</small>"],
+    ["Rolling 52-week high / low", "Not available <small>no reliable daily series</small>"],
+    ["Earnings per share", rs(D.eps[5]) + " <small>FY2025 unconsolidated</small>"],
+    ["Price-to-earnings", nf(MKT.price / D.eps[5], 2) + "x <small>on FY2025; " + nf(MKT.price / MKT.ttmEps, 2) + "x on trailing 12 months</small>"],
+    ["Book value per share", rs(D.bvps[5], 0) + " <small>FY2025</small>"],
+    ["Price-to-book", nf(MKT.price / D.bvps[5], 2) + "x <small>calculated</small>"],
+    ["Dividend per share", rs(D.dps[5]) + " <small>FY2025; PKR 32.00 trailing 12 months</small>"],
+    ["Dividend yield", pct(D.dps[5] / MKT.price * 100) + " <small>on FY2025 dividend; " + pct(MKT.ttmDps / MKT.price * 100) + " on trailing</small>"],
+    ["FY2025 price return", pct(DER.priceReturn[5]) + " <small>calculated</small>"],
+    ["FY2025 total shareholder return", pct(DER.tsr[5]) + " <small>price plus dividend</small>"]
+  ];
+  document.getElementById("marketList").innerHTML = rows.map(function (r) {
+    return '<div class="statrow"><span class="lab">' + r[0] + '</span><span class="val">' + r[1] + '</span></div>';
+  }).join("");
+}
+
+/* =========================================================================
+   6. CHART SCAFFOLDING
+   ========================================================================= */
+function baseOpts(extra) {
+  var p = palette();
+  var o = {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: "index", intersect: false },
+    layout: { padding: { top: 6 } },
+    plugins: {
+      legend: {
+        display: true, position: "bottom",
+        labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded",
+          color: p.slate, font: { family: "Inter", size: 11.5 }, padding: 14 }
+      },
+      tooltip: {
+        backgroundColor: p.ink, titleColor: "#fff", bodyColor: "#fff", borderWidth: 0,
+        padding: 10, cornerRadius: 6, displayColors: true, boxWidth: 9, boxHeight: 9, usePointStyle: true,
+        titleFont: { family: "Inter", size: 12, weight: "600" }, bodyFont: { family: "Inter", size: 12 }
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, border: { color: p.line },
+           ticks: { color: p.slate, font: { family: "Inter", size: 11.5 } } },
+      y: { grid: { color: p.line, drawTicks: false }, border: { display: false },
+           ticks: { color: p.slate, font: { family: "Inter", size: 11.5 }, padding: 6 } }
+    },
+    onClick: function (evt, els, chart) {
+      if (!els.length) return;
+      var lbl = chart.data.labels[els[0].index];
+      var yr = parseInt(String(lbl).replace(/\D/g, ""), 10);
+      if (YEARS.indexOf(yr) >= 0) { STATE.year = yr; document.getElementById("yearSel").value = String(yr); refresh(); }
+    }
+  };
+  return Object.assign(o, extra || {});
+}
+function mk(id, cfg) {
+  if (CHARTS[id]) CHARTS[id].destroy();
+  var el = document.getElementById(id);
+  if (!el) return;
+  CHARTS[id] = new Chart(el.getContext("2d"), cfg);
+}
+var yrLabels = YEARS.map(function (y) { return "FY" + y; });
+function pctTick(v) { return v + "%"; }
+
+/* ---- overview trend ---- */
+var METRIC_META = {
+  grossIncome: { t: "Total income", note: "Total income is net interest income plus non-interest income, before operating expenses and provisions." },
+  pat: { t: "Profit after tax", note: "Profit after tax is stated after an effective tax rate that has ranged from 39% to 56% over this period." },
+  pbt: { t: "Profit before tax", note: "Profit before tax removes the effect of Pakistan's changing bank taxation from the trend." },
+  nii: { t: "Net interest income", note: "Net interest income is markup earned less markup expensed, the core spread business." },
+  deposits: { t: "Deposits", note: "Customer deposits at each year end, the bank's primary funding source." },
+  advGross: { t: "Advances (gross)", note: "Gross advances before provisions, the bank's lending book." },
+  totalAssets: { t: "Total assets", note: "Total assets net of provisions at each year end." },
+  totalEquity: { t: "Total equity", note: "Total equity including surplus on revaluation of assets." }
+};
+function buildTrend() {
+  var p = palette(), key = STATE.metric, meta = METRIC_META[key];
+  var vals = D[key].map(function (v) { return v / 1000; });
+  document.getElementById("trendTitle").textContent = meta.t;
+  document.getElementById("trendNote").textContent = meta.note;
+  mk("cTrend", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [{
+      label: meta.t + " (PKR bn)", data: vals,
+      backgroundColor: YEARS.map(function (y) { return y === STATE.year ? p.greenDark : p.greenLight; }),
+      borderRadius: 4, maxBarThickness: 66
+    }] },
+    options: baseOpts({
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (c) { return "PKR " + nf(c.parsed.y, 1) + "bn"; } } } },
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { family: "Inter", size: 11.5 } } },
+                y: { grid: { color: p.line }, border: { display: false },
+                     ticks: { color: p.slate, font: { family: "Inter", size: 11.5 }, callback: function (v) { return nf(v, 0); } },
+                     title: { display: true, text: "PKR billion", color: p.slate, font: { family: "Inter", size: 11 } } } }
+    })
+  });
+}
+function buildMix() {
+  var p = palette(), y = STATE.year, i = iOf(y);
+  document.getElementById("mixCap").textContent = "FY" + y + " \u2014 share of total income";
+  mk("cMix", {
+    type: "doughnut",
+    data: { labels: ["Net interest income", "Fee, commission and exchange", "Capital gains and dividends", "Other income"],
+      datasets: [{ data: [D.nii[i], D.fee[i], D.capGainDiv[i], D.otherIncome[i]].map(function (v) { return v / 1000; }),
+        backgroundColor: [p.greenDark, p.greenLight, "#8C6E2B", "#5B7C99"], borderColor: p.card, borderWidth: 2 }] },
+    options: baseOpts({
+      cutout: "58%", onClick: null, interaction: { mode: "nearest", intersect: true },
+      scales: {},
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { family: "Inter", size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) {
+          var tot = c.dataset.data.reduce(function (a, b) { return a + b; }, 0);
+          return c.label + ": PKR " + nf(c.parsed, 1) + "bn (" + nf(c.parsed / tot * 100, 1) + "%)"; } } } }
+    })
+  });
+}
+
+/* ---- performance ---- */
+function buildPerformance() {
+  var p = palette();
+  mk("cIncome", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [
+      { label: "Net interest income", data: D.nii.map(function (v) { return v / 1000; }), backgroundColor: p.greenDark, stack: "a", borderRadius: 3, maxBarThickness: 58 },
+      { label: "Non-interest income", data: D.nfi.map(function (v) { return v / 1000; }), backgroundColor: p.greenLight, stack: "a", borderRadius: 3, maxBarThickness: 58 },
+      { label: "Total income", data: D.grossIncome.map(function (v) { return v / 1000; }), type: "line", borderColor: "#8C6E2B", backgroundColor: "#8C6E2B", borderWidth: 2, pointRadius: 3, tension: .3 }
+    ] },
+    options: baseOpts({
+      scales: { x: { stacked: true, grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { family: "Inter", size: 11.5 } } },
+        y: { stacked: true, grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { family: "Inter", size: 11.5 } }, title: { display: true, text: "PKR billion", color: p.slate, font: { size: 11 } } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { family: "Inter", size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.dataset.label + ": PKR " + nf(c.parsed.y, 1) + "bn"; } } } }
+    })
+  });
+
+  mk("cProfit", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [
+      { label: "Profit before tax", data: D.pbt.map(function (v) { return v / 1000; }), backgroundColor: p.greenLight, borderRadius: 3, maxBarThickness: 34, yAxisID: "y" },
+      { label: "Profit after tax", data: D.pat.map(function (v) { return v / 1000; }), backgroundColor: p.greenDark, borderRadius: 3, maxBarThickness: 34, yAxisID: "y" },
+      { label: "Growth in profit after tax", data: DER.patGrowth, type: "line", borderColor: "#8C6E2B", backgroundColor: "#8C6E2B", borderWidth: 2, borderDash: [5, 4], pointRadius: 3, tension: .3, yAxisID: "y1", spanGaps: true }
+    ] },
+    options: baseOpts({
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { family: "Inter", size: 11.5 } } },
+        y: { position: "left", grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR billion", color: p.slate, font: { size: 11 } } },
+        y1: { position: "right", grid: { display: false }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: pctTick }, title: { display: true, text: "growth %", color: p.slate, font: { size: 11 } } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.datasetIndex === 2 ? c.dataset.label + ": " + nf(c.parsed.y, 1) + "%" : c.dataset.label + ": PKR " + nf(c.parsed.y, 1) + "bn"; } } } }
+    })
+  });
+
+  mk("cEps", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [
+      { label: "Earnings per share", data: D.eps, backgroundColor: p.greenDark, borderRadius: 3, maxBarThickness: 34, yAxisID: "y" },
+      { label: "Dividend per share", data: D.dps, backgroundColor: p.greenLight, borderRadius: 3, maxBarThickness: 34, yAxisID: "y" },
+      { label: "Payout ratio", data: D.payout, type: "line", borderColor: "#8C6E2B", backgroundColor: "#8C6E2B", borderWidth: 2, borderDash: [5, 4], pointRadius: 3, tension: .3, yAxisID: "y1" }
+    ] },
+    options: baseOpts({
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { position: "left", grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR per share", color: p.slate, font: { size: 11 } } },
+        y1: { position: "right", grid: { display: false }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: pctTick }, title: { display: true, text: "payout %", color: p.slate, font: { size: 11 } } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.datasetIndex === 2 ? "Payout ratio: " + nf(c.parsed.y, 1) + "%" : c.dataset.label + ": PKR " + nf(c.parsed.y, 2); } } } }
+    })
+  });
+
+  mk("cRatios", {
+    type: "line",
+    data: { labels: yrLabels, datasets: [
+      { label: "Return on equity", data: D.roe, borderColor: p.greenDark, backgroundColor: p.greenDark, borderWidth: 2.4, pointRadius: 3, tension: .3, yAxisID: "y" },
+      { label: "Gross spread ratio", data: D.grossSpread, borderColor: p.greenLight, backgroundColor: p.greenLight, borderWidth: 2, pointRadius: 3, tension: .3, yAxisID: "y" },
+      { label: "Return on assets", data: D.roa, borderColor: "#8C6E2B", backgroundColor: "#8C6E2B", borderWidth: 2, borderDash: [5, 4], pointRadius: 3, tension: .3, yAxisID: "y1" }
+    ] },
+    options: baseOpts({
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { position: "left", grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: pctTick } },
+        y1: { position: "right", min: 0, max: 2, grid: { display: false }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: pctTick } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.dataset.label + ": " + nf(c.parsed.y, 1) + "%"; } } } }
+    })
+  });
+
+  mk("cNfi", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [
+      { label: "Fee, commission, brokerage and exchange", data: D.fee.map(function (v) { return v / 1000; }), backgroundColor: p.greenDark, stack: "a", borderRadius: 3, maxBarThickness: 58 },
+      { label: "Capital gains and dividend income", data: D.capGainDiv.map(function (v) { return v / 1000; }), backgroundColor: p.greenLight, stack: "a", borderRadius: 3, maxBarThickness: 58 },
+      { label: "Other income", data: D.otherIncome.map(function (v) { return v / 1000; }), backgroundColor: "#8C6E2B", stack: "a", borderRadius: 3, maxBarThickness: 58 }
+    ] },
+    options: baseOpts({
+      scales: { x: { stacked: true, grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { stacked: true, grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR billion", color: p.slate, font: { size: 11 } } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.dataset.label + ": PKR " + nf(c.parsed.y, 1) + "bn"; } } } }
+    })
+  });
+
+  mk("cSegment", {
+    type: "bar",
+    data: { labels: SEG_LABELS, datasets: [
+      { label: "FY2024", data: SEG_INCOME[2024].map(function (v) { return v / 1000; }), backgroundColor: p.greenLight, borderRadius: 3, maxBarThickness: 26 },
+      { label: "FY2025", data: SEG_INCOME[2025].map(function (v) { return v / 1000; }), backgroundColor: p.greenDark, borderRadius: 3, maxBarThickness: 26 }
+    ] },
+    options: baseOpts({
+      onClick: null,
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 10.5 }, maxRotation: 40, minRotation: 0 } },
+        y: { grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR billion", color: p.slate, font: { size: 11 } } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.dataset.label + ": PKR " + nf(c.parsed.y, 1) + "bn"; } } } }
+    })
+  });
+}
+
+/* ---- balance sheet ---- */
+function buildBalance() {
+  var p = palette();
+  mk("cAssets", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [
+      { label: "Total assets", data: D.totalAssets.map(function (v) { return v / 1000000; }),
+        backgroundColor: YEARS.map(function (y) { return y === STATE.year ? p.greenDark : p.greenLight; }), borderRadius: 4, maxBarThickness: 60, yAxisID: "y" },
+      { label: "Growth", data: DER.assetGrowth, type: "line", borderColor: "#8C6E2B", backgroundColor: "#8C6E2B", borderWidth: 2, borderDash: [5, 4], pointRadius: 3, tension: .3, yAxisID: "y1", spanGaps: true }
+    ] },
+    options: baseOpts({
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { position: "left", grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR trillion", color: p.slate, font: { size: 11 } } },
+        y1: { position: "right", grid: { display: false }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: pctTick } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.datasetIndex === 1 ? "Growth: " + nf(c.parsed.y, 1) + "%" : "Total assets: PKR " + nf(c.parsed.y, 2) + "tn"; } } } }
+    })
+  });
+
+  mk("cDepAdv", {
+    type: "line",
+    data: { labels: yrLabels, datasets: [
+      { label: "Deposits", data: D.deposits.map(function (v) { return v / 1000000; }), borderColor: p.greenDark, backgroundColor: p.greenDark, borderWidth: 2.6, pointRadius: 3, tension: .3, fill: false },
+      { label: "Advances, gross", data: D.advGross.map(function (v) { return v / 1000000; }), borderColor: "#8C6E2B", backgroundColor: "#8C6E2B", borderWidth: 2.2, pointRadius: 3, tension: .3, fill: false }
+    ] },
+    options: baseOpts({
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR trillion", color: p.slate, font: { size: 11 } } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.dataset.label + ": PKR " + nf(c.parsed.y, 2) + "tn"; } } } }
+    })
+  });
+
+  buildAssetMix();
+  buildFunding();
+
+  mk("cEquity", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [
+      { label: "Tier-1 equity", data: D.tier1Equity.map(function (v) { return v / 1000; }), backgroundColor: p.greenDark, stack: "e", borderRadius: 3, maxBarThickness: 54, yAxisID: "y" },
+      { label: "Surplus on revaluation", data: D.surplus.map(function (v) { return v / 1000; }), backgroundColor: p.greenLight, stack: "e", borderRadius: 3, maxBarThickness: 54, yAxisID: "y" },
+      { label: "Book value per share", data: D.bvps, type: "line", borderColor: "#8C6E2B", backgroundColor: "#8C6E2B", borderWidth: 2, pointRadius: 3, tension: .3, yAxisID: "y1" }
+    ] },
+    options: baseOpts({
+      scales: { x: { stacked: true, grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { stacked: true, position: "left", grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR billion", color: p.slate, font: { size: 11 } } },
+        y1: { position: "right", grid: { display: false }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR per share", color: p.slate, font: { size: 11 } } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.datasetIndex === 2 ? "Book value per share: PKR " + nf(c.parsed.y, 0) : c.dataset.label + ": PKR " + nf(c.parsed.y, 1) + "bn"; } } } }
+    })
+  });
+}
+function buildAssetMix() {
+  var p = palette(), y = STATE.year, i = iOf(y);
+  var el = document.getElementById("assetMixCap");
+  if (el) el.textContent = "FY" + y + " \u2014 asset composition, net of provisions";
+  var vals = [
+    D.investGross[i] - D.provInv[i],
+    D.advGross[i] - D.provAdv[i],
+    D.cash[i],
+    D.lendings[i],
+    D.fixedAssets[i],
+    D.otherAssets[i]
+  ].map(function (v) { return v / 1000; });
+  mk("cAssetMix", {
+    type: "doughnut",
+    data: { labels: ["Investments, net", "Advances, net", "Cash and bank balances", "Lendings to financial institutions", "Fixed assets", "Other assets"],
+      datasets: [{ data: vals, backgroundColor: [p.greenDark, "#8C6E2B", p.greenLight, "#5B7C99", "#A0522D", "#7A8C99"], borderColor: p.card, borderWidth: 2 }] },
+    options: baseOpts({
+      cutout: "58%", onClick: null, interaction: { mode: "nearest", intersect: true }, scales: {},
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11 }, padding: 10 } },
+        tooltip: { callbacks: { label: function (c) {
+          var tot = c.dataset.data.reduce(function (a, b) { return a + b; }, 0);
+          return c.label + ": PKR " + nf(c.parsed, 1) + "bn (" + nf(c.parsed / tot * 100, 1) + "%)"; } } } }
+    })
+  });
+}
+function buildFunding() {
+  var p = palette(), y = STATE.year, i = iOf(y);
+  var el = document.getElementById("fundCap");
+  if (el) el.textContent = "FY" + y + " \u2014 funding structure";
+  var items = [
+    { l: "Deposits", v: D.deposits[i], c: p.greenDark },
+    { l: "Borrowings", v: D.borrowings[i], c: "#8C6E2B" },
+    { l: "Equity", v: D.totalEquity[i], c: p.greenLight },
+    { l: "Bills payable", v: D.bills[i], c: "#5B7C99" },
+    { l: "Subordinated debt", v: D.subDebt[i], c: "#A0522D" },
+    { l: "Other liabilities", v: D.otherLiab[i], c: "#7A8C99" }
+  ];
+  var total = items.reduce(function (a, b) { return a + b.v; }, 0);
+  mk("cFunding", {
+    type: "bar",
+    data: { labels: [""], datasets: items.map(function (it) {
+      return { label: it.l + " \u2014 " + nf(it.v / total * 100, 1) + "%", data: [it.v / 1000], backgroundColor: it.c, stack: "f", borderRadius: 2, barThickness: 74 };
+    }) },
+    options: baseOpts({
+      indexAxis: "y", onClick: null,
+      scales: { x: { stacked: true, grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11 }, callback: function (v) { return nf(v, 0); } }, title: { display: true, text: "PKR billion", color: p.slate, font: { size: 11 } } },
+        y: { stacked: true, grid: { display: false }, border: { display: false }, ticks: { display: false } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11 }, padding: 10 } },
+        tooltip: { callbacks: { label: function (c) { return c.dataset.label.split(" \u2014 ")[0] + ": PKR " + nf(c.parsed.x, 1) + "bn"; } } } }
+    })
+  });
+}
+
+/* ---- banking ---- */
+function buildBanking() {
+  var p = palette();
+  mk("cDeposits", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [
+      { label: "Deposits", data: D.deposits.map(function (v) { return v / 1000000; }),
+        backgroundColor: YEARS.map(function (y) { return y === STATE.year ? p.greenDark : p.greenLight; }), borderRadius: 4, maxBarThickness: 60, yAxisID: "y" },
+      { label: "Growth", data: DER.depositGrowth, type: "line", borderColor: "#8C6E2B", backgroundColor: "#8C6E2B", borderWidth: 2, borderDash: [5, 4], pointRadius: 3, tension: .3, yAxisID: "y1", spanGaps: true }
+    ] },
+    options: baseOpts({
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { position: "left", grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR trillion", color: p.slate, font: { size: 11 } } },
+        y1: { position: "right", grid: { display: false }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: pctTick } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.datasetIndex === 1 ? "Growth: " + nf(c.parsed.y, 1) + "%" : "Deposits: PKR " + nf(c.parsed.y, 2) + "tn"; } } } }
+    })
+  });
+
+  var d24 = depositSplit(2024), d25 = depositSplit(2025);
+  mk("cCasa", {
+    type: "bar",
+    data: { labels: ["FY2024", "FY2025"], datasets: [
+      { label: "Current accounts", data: [d24.current / 1000, d25.current / 1000], backgroundColor: p.greenDark, stack: "d", borderRadius: 3, maxBarThickness: 70 },
+      { label: "Savings accounts", data: [d24.savings / 1000, d25.savings / 1000], backgroundColor: p.greenLight, stack: "d", borderRadius: 3, maxBarThickness: 70 },
+      { label: "Term and other deposits", data: [d24.term / 1000, d25.term / 1000], backgroundColor: "#8C6E2B", stack: "d", borderRadius: 3, maxBarThickness: 70 }
+    ] },
+    options: baseOpts({
+      onClick: null,
+      scales: { x: { stacked: true, grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { stacked: true, grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR billion", color: p.slate, font: { size: 11 } } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.dataset.label + ": PKR " + nf(c.parsed.y, 0) + "bn"; } } } }
+    })
+  });
+
+  mk("cDepSeg", {
+    type: "bar",
+    data: { labels: ["Corporate / commercial", "Branch banking", "Islamic banking", "International"], datasets: [
+      { label: "FY2024", data: [SEG_DEPOSITS[2024][0], SEG_DEPOSITS[2024][2], SEG_DEPOSITS[2024][3], SEG_DEPOSITS[2024][4]].map(function (v) { return v / 1000; }), backgroundColor: p.greenLight, borderRadius: 3, maxBarThickness: 34 },
+      { label: "FY2025", data: [SEG_DEPOSITS[2025][0], SEG_DEPOSITS[2025][2], SEG_DEPOSITS[2025][3], SEG_DEPOSITS[2025][4]].map(function (v) { return v / 1000; }), backgroundColor: p.greenDark, borderRadius: 3, maxBarThickness: 34 }
+    ] },
+    options: baseOpts({
+      onClick: null,
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR billion", color: p.slate, font: { size: 11 } } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.dataset.label + ": PKR " + nf(c.parsed.y, 0) + "bn"; } } } }
+    })
+  });
+
+  mk("cAdvances", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [
+      { label: "Advances, gross", data: D.advGross.map(function (v) { return v / 1000; }),
+        backgroundColor: YEARS.map(function (y) { return y === STATE.year ? p.greenDark : p.greenLight; }), borderRadius: 4, maxBarThickness: 60, yAxisID: "y" },
+      { label: "Advances-to-deposits ratio, gross", data: D.adrGross, type: "line", borderColor: "#8C6E2B", backgroundColor: "#8C6E2B", borderWidth: 2, pointRadius: 3, tension: .3, yAxisID: "y1" }
+    ] },
+    options: baseOpts({
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { position: "left", grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR billion", color: p.slate, font: { size: 11 } } },
+        y1: { position: "right", min: 0, max: 70, grid: { display: false }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: pctTick } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.datasetIndex === 1 ? "Ratio: " + nf(c.parsed.y, 1) + "%" : "Advances, gross: PKR " + nf(c.parsed.y, 0) + "bn"; } } } }
+    })
+  });
+
+  mk("cNpl", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [
+      { label: "Provisions held against advances", data: D.provAdv.map(function (v) { return v / 1000; }), backgroundColor: p.greenLight, borderRadius: 3, maxBarThickness: 54, yAxisID: "y" },
+      { label: "Gross infection ratio", data: D.nplRatio, type: "line", borderColor: "#8C6E2B", backgroundColor: "#8C6E2B", borderWidth: 2.4, pointRadius: 3, tension: .3, yAxisID: "y1" },
+      { label: "Net infection ratio", data: D.netInfection, type: "line", borderColor: "#5B7C99", backgroundColor: "#5B7C99", borderWidth: 2, borderDash: [5, 4], pointRadius: 3, tension: .3, yAxisID: "y1" }
+    ] },
+    options: baseOpts({
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { position: "left", grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR billion", color: p.slate, font: { size: 11 } } },
+        y1: { position: "right", min: 0, max: 16, grid: { display: false }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: pctTick } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.datasetIndex === 0 ? "Provisions held: PKR " + nf(c.parsed.y, 0) + "bn" : c.dataset.label + ": " + nf(c.parsed.y, 1) + "%"; } } } }
+    })
+  });
+
+  mk("cCar", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [
+      { label: "Capital adequacy ratio", data: D.car,
+        backgroundColor: YEARS.map(function (y) { return y === STATE.year ? p.greenDark : p.greenLight; }), borderRadius: 4, maxBarThickness: 60 },
+      { label: "Regulatory minimum (13.0%)", data: YEARS.map(function () { return CAR_MIN; }), type: "line", borderColor: p.neg, backgroundColor: p.neg, borderWidth: 2, borderDash: [6, 4], pointRadius: 0 }
+    ] },
+    options: baseOpts({
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { min: 0, max: 30, grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: pctTick } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.dataset.label + ": " + nf(c.parsed.y, 1) + "%"; } } } }
+    })
+  });
+
+  mk("cCarMix", {
+    type: "bar",
+    data: { labels: ["FY2024", "FY2025"], datasets: [
+      { label: "Common equity Tier-1", data: [CAP_MIX[2024].cet1, CAP_MIX[2025].cet1], backgroundColor: p.greenDark, stack: "c", borderRadius: 3, maxBarThickness: 70 },
+      { label: "Additional Tier-1", data: [CAP_MIX[2024].adt1, CAP_MIX[2025].adt1], backgroundColor: p.greenLight, stack: "c", borderRadius: 3, maxBarThickness: 70 },
+      { label: "Tier-2", data: [CAP_MIX[2024].tier2, CAP_MIX[2025].tier2], backgroundColor: "#8C6E2B", stack: "c", borderRadius: 3, maxBarThickness: 70 },
+      { label: "Regulatory minimum (13.0%)", data: [CAR_MIN, CAR_MIN], type: "line", borderColor: p.neg, backgroundColor: p.neg, borderWidth: 2, borderDash: [6, 4], pointRadius: 0 }
+    ] },
+    options: baseOpts({
+      onClick: null,
+      scales: { x: { stacked: true, grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { stacked: true, min: 0, max: 26, grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: pctTick } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: {
+          label: function (c) { return c.dataset.label + ": " + nf(c.parsed.y, 1) + "%"; },
+          footer: function (items) {
+            var yr = items[0].label === "FY2024" ? 2024 : 2025;
+            return "Risk-weighted assets: PKR " + nf(CAP_MIX[yr].rwaTotal, 0) + "bn";
+          } } } }
+    })
+  });
+
+  mk("cEfficiency", {
+    type: "line",
+    data: { labels: yrLabels, datasets: [
+      { label: "Cost-to-income ratio", data: D.cir, borderColor: p.greenDark, backgroundColor: p.greenDark, borderWidth: 2.6, pointRadius: 3, tension: .3 },
+      { label: "Intermediation cost ratio", data: D.intermediation, borderColor: "#8C6E2B", backgroundColor: "#8C6E2B", borderWidth: 2, borderDash: [5, 4], pointRadius: 3, tension: .3 }
+    ] },
+    options: baseOpts({
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { min: 0, max: 50, grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: pctTick } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.dataset.label + ": " + nf(c.parsed.y, 1) + "%"; } } } }
+    })
+  });
+}
+
+/* ---- stock ---- */
+function buildStock() {
+  var p = palette();
+  mk("cPrice", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [
+      { label: "High to low range", data: YEARS.map(function (y, i) { return [D.priceLow[i], D.priceHigh[i]]; }),
+        backgroundColor: p.greenLight, borderRadius: 3, maxBarThickness: 26 },
+      { label: "Closing price at year end", data: D.priceEnd, type: "line", borderColor: p.greenDark, backgroundColor: p.greenDark, borderWidth: 2.4, pointRadius: 4, tension: .25 }
+    ] },
+    options: baseOpts({
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 } }, title: { display: true, text: "PKR per share", color: p.slate, font: { size: 11 } } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) {
+          if (c.datasetIndex === 0) { var v = c.raw; return "Range: PKR " + nf(v[0], 2) + " to PKR " + nf(v[1], 2); }
+          return "Year-end close: PKR " + nf(c.parsed.y, 2); } } } }
+    })
+  });
+
+  mk("cTsr", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [
+      { label: "Price return", data: DER.priceReturn, backgroundColor: p.greenDark, stack: "t", borderRadius: 3, maxBarThickness: 54 },
+      { label: "Dividend return", data: DER.divReturn, backgroundColor: p.greenLight, stack: "t", borderRadius: 3, maxBarThickness: 54 }
+    ] },
+    options: baseOpts({
+      scales: { x: { stacked: true, grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { stacked: true, grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: pctTick } } },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11.5 }, padding: 12 } },
+        tooltip: { callbacks: { label: function (c) { return c.dataset.label + ": " + nf(c.parsed.y, 1) + "%"; } } } }
+    })
+  });
+
+  mk("cPe", {
+    type: "bar",
+    data: { labels: yrLabels, datasets: [{ label: "Price-to-earnings at year end", data: D.pe,
+      backgroundColor: YEARS.map(function (y) { return y === STATE.year ? p.greenDark : p.greenLight; }), borderRadius: 4, maxBarThickness: 54 }] },
+    options: baseOpts({
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (c) { return nf(c.parsed.y, 2) + "x"; } } } },
+      scales: { x: { grid: { display: false }, border: { color: p.line }, ticks: { color: p.slate, font: { size: 11.5 } } },
+        y: { grid: { color: p.line }, border: { display: false }, ticks: { color: p.slate, font: { size: 11.5 }, callback: function (v) { return v + "x"; } } } }
+    })
+  });
+
+  mk("cOwners", {
+    type: "doughnut",
+    data: { labels: OWNERS.map(function (o) { return o.label; }),
+      datasets: [{ data: OWNERS.map(function (o) { return o.pct; }), backgroundColor: [p.greenDark, p.greenLight, "#8C6E2B", "#5B7C99"], borderColor: p.card, borderWidth: 2 }] },
+    options: baseOpts({
+      cutout: "58%", onClick: null, interaction: { mode: "nearest", intersect: true }, scales: {},
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: "rectRounded", color: p.slate, font: { size: 11 }, padding: 10 } },
+        tooltip: { callbacks: { label: function (c) { return c.label + ": " + nf(c.parsed, 2) + "%"; } } } }
+    })
+  });
+}
+
+/* =========================================================================
+   7. INSIGHTS AND WATCHLIST
+   ========================================================================= */
+function renderInsights() {
+  var y = STATE.year, i = iOf(y), p = i - 1;
+  if (p < 0) { y = 2021; i = 1; p = 0; }
+  var out = [];
+
+  out.push(["Profitability",
+    "Profit after tax of " + bn(D.pat[i]) + " in FY" + YEARS[i] + " is " + nf(Math.abs(DER.patGrowth[i]), 1) + "% " +
+    (DER.patGrowth[i] >= 0 ? "higher" : "lower") + " than FY" + YEARS[p] + ". Profit before tax " +
+    (growth(D.pbt[i], D.pbt[p]) >= 0 ? "rose " : "fell ") + nf(Math.abs(growth(D.pbt[i], D.pbt[p])), 1) +
+    "%, so the gap between the two is tax: the effective rate went from " +
+    pct(DER.effTax[p]) + " to " + pct(DER.effTax[i]) + "."]);
+
+  out.push(["Income quality",
+    "Total income reached " + bn(D.grossIncome[i]) + ", of which net interest income was " +
+    pct(D.nii[i] / D.grossIncome[i] * 100) + " and non-interest income " + pct(D.nfi[i] / D.grossIncome[i] * 100) +
+    ". Fee, commission and exchange income " + (growth(D.fee[i], D.fee[p]) >= 0 ? "grew " : "fell ") +
+    nf(Math.abs(growth(D.fee[i], D.fee[p])), 1) + "% to " + bn(D.fee[i]) + ", which is the more repeatable half of non-interest income."]);
+
+  out.push(["Deposits",
+    "Deposits " + (DER.depositGrowth[i] >= 0 ? "grew " : "fell ") + nf(Math.abs(DER.depositGrowth[i]), 1) + "% to " + bn(D.deposits[i]) +
+    " while gross advances " + (growth(D.advGross[i], D.advGross[p]) >= 0 ? "grew " : "fell ") +
+    nf(Math.abs(growth(D.advGross[i], D.advGross[p])), 1) + "%. Funding is being raised far faster than it is being lent, so the surplus is going into securities."]);
+
+  out.push(["Lending",
+    "The gross advances-to-deposits ratio " + (D.adrGross[i] < D.adrGross[p] ? "fell" : "rose") + " from " + pct(D.adrGross[p]) +
+    " to " + pct(D.adrGross[i]) + ". Gross advances of " + bn(D.advGross[i]) + " are " +
+    pct(D.advGross[i] / D.totalAssets[i] * 100) + " of total assets, against investments at " +
+    pct(D.investGross[i] / D.totalAssets[i] * 100) + "."]);
+
+  out.push(["Efficiency",
+    "Cost-to-income " + (D.cir[i] < D.cir[p] ? "improved" : "worsened") + " from " + pct(D.cir[p]) + " to " + pct(D.cir[i]) +
+    ". Administrative expenses rose " + nf(growth(D.admin[i], D.admin[p]), 1) + "% to " + bn(D.admin[i]) +
+    ", but income rose " + nf(DER.totalIncomeGrowth[i], 1) + "%, so the ratio improved despite the spending."]);
+
+  out.push(["Asset quality",
+    "The gross infection ratio is " + pct(D.nplRatio[i]) + " against " + pct(D.nplRatio[p]) + " a year earlier, on estimated gross non-performing loans of " +
+    bn(DER.grossNpl[i]) + ". The net infection ratio of " + pct(D.netInfection[i]) +
+    " and provision coverage of " + pct(DER.coverage[i], 0) + " indicate the book is provided for."]);
+
+  out.push(["Capital",
+    "The capital adequacy ratio is " + pct(D.car[i]) + " against a 13.0% regulatory minimum, a buffer of " +
+    nf(D.car[i] - CAR_MIN, 1) + " percentage points. Total equity of " + bn(D.totalEquity[i]) + " supports assets of " +
+    bn(D.totalAssets[i]) + ", leverage of " + nf(D.assetsToEquity[i], 1) + " times."]);
+
+  out.push(["Shareholder returns",
+    "Earnings per share of " + rs(D.eps[i]) + " and a dividend of " + rs(D.dps[i]) + " give a payout ratio of " + pct(D.payout[i]) +
+    ". With the share price " + (DER.priceReturn[i] >= 0 ? "up " : "down ") + nf(Math.abs(DER.priceReturn[i]), 1) +
+    "% over the year, total shareholder return was " + pct(DER.tsr[i]) + "."]);
+
+  document.getElementById("insightGrid").innerHTML = out.map(function (o) {
+    return '<div class="insight"><h4>' + o[0] + '</h4><p>' + o[1] + '</p></div>';
+  }).join("");
+}
+
+function renderFlags() {
+  var i = 5, p = 4;   /* watchlist is assessed on the latest full year */
+  var flags = [];
+
+  if (D.advGross[i] < D.advGross[p]) {
+    flags.push(["risk", "The loan book is shrinking",
+      "Gross advances fell " + nf(Math.abs(growth(D.advGross[i], D.advGross[p])), 1) + "% to " + bn(D.advGross[i]) +
+      " while the balance sheet grew 57%. Growth is coming from securities, not from customers.", "Structural"]);
+  }
+  if (D.adrGross[i] < 50) {
+    flags.push(["watch", "Advances-to-deposits ratio below 50%",
+      "At " + pct(D.adrGross[i]) + ", the gross ratio is well under the 50% level that has historically carried an additional tax charge on income from government securities in Pakistan.", "Regulatory and tax"]);
+  }
+  if (D.borrowings[i] > D.deposits[i]) {
+    flags.push(["risk", "Borrowings exceed customer deposits",
+      "Borrowings of " + bn(D.borrowings[i]) + " are larger than deposits of " + bn(D.deposits[i]) +
+      ". Wholesale repo funding is cheap and flexible, but it reprices faster than deposits do.", "Funding"]);
+  }
+  if (D.assetsToEquity[i] > 20) {
+    flags.push(["watch", "Leverage above 20 times",
+      "Assets are " + nf(D.assetsToEquity[i], 1) + " times equity, against " + nf(D.assetsToEquity[2], 1) +
+      " times in FY2022. Capital ratios stay strong because most of the growth is in low-risk-weight government paper.", "Balance sheet"]);
+  }
+  if (DER.effTax[i] > 50) {
+    flags.push(["watch", "Effective tax rate above 50%",
+      "Tax took " + pct(DER.effTax[i]) + " of pre-tax profit in FY2025, up from " + pct(DER.effTax[p]) +
+      ". Bank taxation in Pakistan has changed repeatedly and is a live variable in any forecast.", "Earnings"]);
+  }
+  if (D.nfi[i] < D.nfi[p]) {
+    flags.push(["watch", "Non-interest income fell",
+      "Non-interest income dropped " + nf(Math.abs(growth(D.nfi[i], D.nfi[p])), 1) + "% to " + bn(D.nfi[i]) +
+      ", as capital gains and dividend income fell from " + bn(D.capGainDiv[p]) + " to " + bn(D.capGainDiv[i]) + ". Fee income grew, which is the healthier component.", "Income mix"]);
+  }
+  if (DEP_MIX[2025].casa < DEP_MIX[2024].casa) {
+    flags.push(["watch", "CASA ratio slipped",
+      "Low-cost deposits fell from " + pct(DEP_MIX[2024].casa) + " to " + pct(DEP_MIX[2025].casa) +
+      " of the total. Still high by industry standards, but new money is costing more than the existing book.", "Funding cost"]);
+  }
+  if (D.nplRatio[i] >= D.nplRatio[p]) {
+    flags.push(["watch", "Gross infection ratio edged up",
+      "The gross ratio moved from " + pct(D.nplRatio[p]) + " to " + pct(D.nplRatio[i]) +
+      ", carrying legacy Silk Bank exposures. Net infection of " + pct(D.netInfection[i]) + " shows the provisioning is there, so this is a monitoring item rather than a loss event.", "Credit"]);
+  }
+  if (D.car[i] > CAR_MIN + 5) {
+    flags.push(["ok", "Capital remains comfortable",
+      "Capital adequacy of " + pct(D.car[i]) + " sits " + nf(D.car[i] - CAR_MIN, 1) +
+      " percentage points above the 13.0% requirement, and common equity Tier-1 improved to " + pct(CAP_MIX[2025].cet1) + ".", "No action"]);
+  }
+  if (D.cir[i] < D.cir[p]) {
+    flags.push(["ok", "Efficiency improved",
+      "Cost-to-income fell to " + pct(D.cir[i]) + " from " + pct(D.cir[p]) + ", the best reading in the six years shown.", "No action"]);
+  }
+
+  document.getElementById("flagGrid").innerHTML = flags.map(function (f) {
+    return '<div class="flagcard flag-' + f[0] + '"><span class="flagdot"></span><div><h4>' + f[1] + '</h4><p>' + f[2] +
+      '</p><span class="sev">' + f[3] + '</span></div></div>';
+  }).join("");
+}
+
+/* =========================================================================
+   8. TABLES
+   ========================================================================= */
+function renderYoy() {
+  var y = STATE.year, i = iOf(y), p = i - 1;
+  document.getElementById("yoyCap").textContent = "FY" + y + " against FY" + (p >= 0 ? YEARS[p] : "\u2014") + ", unconsolidated.";
+  document.getElementById("yoyCur").textContent = "FY" + y;
+  document.getElementById("yoyPrev").textContent = p >= 0 ? "FY" + YEARS[p] : "n/a";
+  var tb = document.querySelector("#yoyTable tbody");
+  if (p < 0) { tb.innerHTML = '<tr><td colspan="5" class="na">FY2020 has no prior year in this dataset.</td></tr>'; return; }
+
+  var amounts = [
+    ["Total income", "grossIncome"], ["Net interest income", "nii"], ["Non-interest income", "nfi"],
+    ["Operating expenses", "admin"], ["Profit before tax", "pbt"], ["Profit after tax", "pat"],
+    ["Total assets", "totalAssets"], ["Deposits", "deposits"], ["Advances, gross", "advGross"],
+    ["Investments, gross", "investGross"], ["Total equity", "totalEquity"]
+  ];
+  var ratios = [
+    ["Earnings per share (PKR)", "eps", 2], ["Dividend per share (PKR)", "dps", 2],
+    ["Return on equity (%)", "roe", 1], ["Return on assets (%)", "roa", 1],
+    ["Cost-to-income (%)", "cir", 1], ["Gross spread ratio (%)", "grossSpread", 1],
+    ["Advances-to-deposits, gross (%)", "adrGross", 1], ["Gross infection ratio (%)", "nplRatio", 1],
+    ["Capital adequacy ratio (%)", "car", 1]
+  ];
+  var html = "";
+  html += '<tr class="grouprow"><td>Amounts, PKR billion</td><td></td><td></td><td></td><td></td></tr>';
+  amounts.forEach(function (r) {
+    var c = D[r[1]][i], v = D[r[1]][p], ch = c - v, g = growth(c, v);
+    var cls = r[1] === "admin" ? (g > 0 ? "neg" : "pos") : (g >= 0 ? "pos" : "neg");
+    html += "<tr><td>" + r[0] + "</td><td>" + bnPlain(c) + "</td><td>" + bnPlain(v) + "</td><td>" +
+      (ch >= 0 ? "+" : "\u2212") + bnPlain(Math.abs(ch)) + '</td><td class="' + cls + '">' + (g >= 0 ? "+" : "\u2212") + nf(Math.abs(g), 1) + "%</td></tr>";
+  });
+  html += '<tr class="grouprow"><td>Per share and ratios</td><td></td><td></td><td></td><td></td></tr>';
+  ratios.forEach(function (r) {
+    var c = D[r[1]][i], v = D[r[1]][p], ch = c - v, g = growth(c, v);
+    var invert = (r[1] === "cir" || r[1] === "nplRatio");
+    var good = invert ? ch < 0 : ch > 0;
+    var cls = Math.abs(ch) < 0.005 ? "" : (good ? "pos" : "neg");
+    var unit = r[1] === "eps" || r[1] === "dps" ? "" : " pp";
+    html += "<tr><td>" + r[0] + "</td><td>" + nf(c, r[2]) + "</td><td>" + nf(v, r[2]) + "</td><td>" +
+      (ch >= 0 ? "+" : "\u2212") + nf(Math.abs(ch), r[2]) + unit + '</td><td class="' + cls + '">' +
+      (g >= 0 ? "+" : "\u2212") + nf(Math.abs(g), 1) + "%</td></tr>";
+  });
+  tb.innerHTML = html;
+}
+
+function renderDataTable() {
+  var rows = [
+    ["group", "Income statement, PKR million"],
+    ["Markup / interest earned", "interestEarned", 0],
+    ["Markup / interest expensed", "interestExpense", 0],
+    ["Net interest income", "nii", 0],
+    ["Fee, commission, brokerage and exchange", "fee", 0],
+    ["Capital gains and dividend income", "capGainDiv", 0],
+    ["Other income", "otherIncome", 0],
+    ["Total non-interest income", "nfi", 0],
+    ["Total income", "grossIncome", 0],
+    ["Administrative and other expenses", "admin", 0],
+    ["Pre-provision operating profit", "ppop", 0],
+    ["Provisions: charge or (reversal)", "provisions", 0],
+    ["Profit before tax", "pbt", 0],
+    ["Taxation", "tax", 0],
+    ["Profit after tax", "pat", 0],
+    ["group", "Balance sheet, PKR million"],
+    ["Cash and bank balances", "cash", 0],
+    ["Lendings to financial institutions", "lendings", 0],
+    ["Investments, gross", "investGross", 0],
+    ["Advances, gross", "advGross", 0],
+    ["Provisions against advances", "provAdv", 0],
+    ["Fixed assets", "fixedAssets", 0],
+    ["Other assets", "otherAssets", 0],
+    ["Total assets, net of provisions", "totalAssets", 0],
+    ["Deposits", "deposits", 0],
+    ["Borrowings", "borrowings", 0],
+    ["Subordinated debt", "subDebt", 0],
+    ["Bills payable", "bills", 0],
+    ["Other liabilities", "otherLiab", 0],
+    ["Total liabilities", "totalLiab", 0],
+    ["Tier-1 equity", "tier1Equity", 0],
+    ["Surplus on revaluation of assets", "surplus", 0],
+    ["Total equity", "totalEquity", 0],
+    ["group", "Ratios, % unless stated"],
+    ["Return on equity", "roe", 1],
+    ["Return on assets", "roa", 1],
+    ["Profit before tax ratio", "pbtRatio", 1],
+    ["Gross spread ratio", "grossSpread", 1],
+    ["Cost-to-income ratio", "cir", 1],
+    ["Intermediation cost ratio", "intermediation", 1],
+    ["Income to expense ratio (times)", "incomeToExpense", 2],
+    ["Advances to deposits, gross", "adrGross", 1],
+    ["Advances to deposits, net", "adrNet", 1],
+    ["Gross infection ratio", "nplRatio", 1],
+    ["Net infection ratio", "netInfection", 1],
+    ["Weighted average cost of debt", "costOfDebt", 1],
+    ["Capital adequacy ratio", "car", 1],
+    ["Total assets to equity (times)", "assetsToEquity", 1],
+    ["group", "Per share, PKR, restated for the 2025 split"],
+    ["Earnings per share", "eps", 2],
+    ["Dividend per share", "dps", 2],
+    ["Dividend payout ratio (%)", "payout", 1],
+    ["Book value per share", "bvps", 0],
+    ["Price-to-earnings (times)", "pe", 2],
+    ["Share price at year end", "priceEnd", 2],
+    ["Share price, highest in year", "priceHigh", 2],
+    ["Share price, lowest in year", "priceLow", 2],
+    ["group", "Calculated on this page"],
+    ["Net interest margin proxy (%)", "_nim", 2],
+    ["Net profit margin (%)", "_npm", 1],
+    ["Effective tax rate (%)", "_tax", 1],
+    ["Advances, net (PKR million)", "_netadv", 0],
+    ["Gross non-performing loans (PKR million)", "_npl", 0],
+    ["Provision coverage (%)", "_cov", 0],
+    ["Total shareholder return (%)", "_tsr", 1]
+  ];
+  var derMap = { _nim: DER.nimProxy, _npm: DER.netProfitMargin, _tax: DER.effTax, _netadv: DER.netAdvances, _npl: DER.grossNpl, _cov: DER.coverage, _tsr: DER.tsr };
+  var html = "<thead><tr><th>Metric</th>" + YEARS.map(function (y) { return "<th>FY" + y + "</th>"; }).join("") + "</tr></thead><tbody>";
+  rows.forEach(function (r) {
+    if (r[0] === "group") {
+      html += '<tr class="grouprow"><td>' + r[1] + "</td>" + YEARS.map(function () { return "<td></td>"; }).join("") + "</tr>";
+      return;
+    }
+    var series = r[1].charAt(0) === "_" ? derMap[r[1]] : D[r[1]];
+    html += "<tr><td>" + r[0] + "</td>" + series.map(function (v) {
+      return v === null || v === undefined || isNaN(v) ? '<td class="na">n/a</td>' : "<td>" + nf(v, r[2]) + "</td>";
+    }).join("") + "</tr>";
+  });
+  html += "</tbody>";
+  document.getElementById("dataTable").innerHTML = html;
+}
+
+/* =========================================================================
+   9. SECTIONS, FILTERS, THEME
+   ========================================================================= */
+var SECTIONS = ["overview", "performance", "balance", "banking", "stock", "insights"];
+
+function buildSection(name) {
+  if (BUILT[name]) return;
+  if (name === "overview") { buildTrend(); buildMix(); }
+  if (name === "performance") buildPerformance();
+  if (name === "balance") buildBalance();
+  if (name === "banking") buildBanking();
+  if (name === "stock") buildStock();
+  BUILT[name] = true;
+}
+
+function showSection(name) {
+  STATE.section = name;
+  SECTIONS.forEach(function (s) {
+    document.getElementById("sec-" + s).hidden = (s !== name);
+    var tab = document.getElementById("tab-" + s);
+    tab.setAttribute("aria-selected", s === name ? "true" : "false");
+  });
+  buildSection(name);
+  window.scrollTo({ top: 0, behavior: "auto" });
+}
+
+function refresh() {
+  renderKpis();
+  renderSnapshot();
+  renderInsights();
+  renderFlags();
+  renderYoy();
+  if (BUILT.overview) { buildTrend(); buildMix(); }
+  if (BUILT.balance) buildBalance();
+  if (BUILT.banking) buildBanking();
+  if (BUILT.stock) buildStock();
+}
+
+function rebuildAll() {
+  Object.keys(CHARTS).forEach(function (k) { CHARTS[k].destroy(); delete CHARTS[k]; });
+  BUILT = {};
+  buildSection(STATE.section);
+}
+
+function printAll() {
+  SECTIONS.forEach(function (s) { document.getElementById("sec-" + s).hidden = false; });
+  SECTIONS.forEach(buildSection);
+  Object.keys(CHARTS).forEach(function (k) { CHARTS[k].resize(); });
+  window.setTimeout(function () {
+    window.print();
+    window.setTimeout(function () { showSection(STATE.section); }, 400);
+  }, 500);
+}
+
+function init() {
+  var sel = document.getElementById("yearSel");
+  sel.innerHTML = YEARS.slice().reverse().map(function (y) {
+    return '<option value="' + y + '"' + (y === STATE.year ? " selected" : "") + ">FY" + y + "</option>";
+  }).join("");
+
+  sel.addEventListener("change", function () { STATE.year = Number(this.value); refresh(); });
+  document.getElementById("metricSel").addEventListener("change", function () {
+    STATE.metric = this.value; if (BUILT.overview) buildTrend();
+  });
+  document.getElementById("catSel").addEventListener("change", function () { STATE.cat = this.value; renderKpis(); });
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    STATE.year = 2025; STATE.metric = "grossIncome"; STATE.cat = "all";
+    document.getElementById("yearSel").value = "2025";
+    document.getElementById("metricSel").value = "grossIncome";
+    document.getElementById("catSel").value = "all";
+    refresh(); if (BUILT.overview) buildTrend();
+  });
+  document.getElementById("printBtn").addEventListener("click", printAll);
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var dark = document.documentElement.getAttribute("data-theme") === "dark";
+    document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+    this.textContent = dark ? "Dark mode" : "Light mode";
+    this.setAttribute("aria-pressed", dark ? "false" : "true");
+    rebuildAll();
+  });
+
+  SECTIONS.forEach(function (s) {
+    document.getElementById("tab-" + s).addEventListener("click", function () { showSection(s); });
+  });
+
+  renderKpis();
+  renderSnapshot();
+  renderMarket();
+  renderInsights();
+  renderFlags();
+  renderYoy();
+  renderDataTable();
+  showSection("overview");
+}
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+else init();
+</script>
+</body>
+</html>
